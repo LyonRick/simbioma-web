@@ -1,14 +1,21 @@
+import Hero from '@/components/sections/Hero'
+import Problema from '@/components/sections/Problema'
+import Segmentacion from '@/components/sections/Segmentacion'
+import Solucion from '@/components/sections/Solucion'
+import Beneficios from '@/components/sections/Beneficios'
+import FAQ from '@/components/sections/FAQ'
+import CTAFinal from '@/components/sections/CTAFinal'
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-16">
-        <h1 className="text-4xl font-bold text-gray-900">
-          Simbioma
-        </h1>
-        <p className="mt-4 text-lg text-gray-600">
-          Plataforma en construcción
-        </p>
-      </div>
+    <main className="flex-grow">
+      <Hero />
+      <Problema />
+      <Segmentacion />
+      <Solucion />
+      <Beneficios />
+      <FAQ />
+      <CTAFinal />
     </main>
   )
 }

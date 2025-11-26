@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import ConditionalLayout from "@/components/layout/ConditionalLayout";
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  display: 'swap',
+  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Simbioma - Plataforma SaaS de Regeneración Territorial",
-  description: "La primera plataforma de Chile que transforma la gestión municipal de residuos en liderazgo regenerativo certificado.",
+  title: "Simbioma | Inteligencia Territorial y Corporativa",
+  description: "Plataforma SaaS para la gestión de la sustentabilidad y regeneración ecosistémica en Chile.",
 };
 
 export default function RootLayout({
@@ -19,9 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body className={inter.className}>
-        {children}
+    <html lang="es" className="scroll-smooth" suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <ConditionalLayout>{children}</ConditionalLayout>
       </body>
     </html>
   );
