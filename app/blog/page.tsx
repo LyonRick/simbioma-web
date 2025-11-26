@@ -2,6 +2,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { Calendar, User, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Blog Simbioma - Noticias sobre Sustentabilidad y Tecnología",
+    description: "Noticias, tendencias y análisis sobre sustentabilidad, tecnología y gestión territorial. Descubre cómo la innovación está transformando la gestión ambiental en Chile.",
+    keywords: ["sustentabilidad", "tecnología ambiental", "gestión territorial", "ESG", "Chile", "innovación", "municipios", "empresas"],
+    openGraph: {
+        title: "Blog Simbioma - Noticias sobre Sustentabilidad y Tecnología",
+        description: "Noticias, tendencias y análisis sobre sustentabilidad, tecnología y gestión territorial.",
+        type: "website",
+        locale: "es_CL",
+    },
+};
 
 export default function BlogPage() {
     const posts = [

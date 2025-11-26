@@ -1,3 +1,17 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Términos y Condiciones | Simbioma",
+    description: "Términos y condiciones de uso de la plataforma Simbioma. Conoce tus derechos, obligaciones y las condiciones para utilizar nuestra plataforma SaaS de gestión ambiental.",
+    keywords: ["términos", "condiciones", "SaaS", "plataforma", "Chile", "legal", "contrato"],
+    openGraph: {
+        title: "Términos y Condiciones | Simbioma",
+        description: "Términos y condiciones de uso de la plataforma Simbioma. Conoce tus derechos y obligaciones.",
+        type: "website",
+        locale: "es_CL",
+    },
+};
+
 export default function TerminosPage() {
     return (
         <div className="min-h-screen bg-white">

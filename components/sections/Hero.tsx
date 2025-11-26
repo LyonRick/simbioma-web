@@ -38,7 +38,7 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.1] mb-6 tracking-tight">
-              Inteligencia Territorial para <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2D9D78] to-[#1E5F8C]">Regenerar Chile</span>
+              Inteligencia Territorial para <span className="text-transparent bg-clip-text bg-gradient-to-r from-verde-bosque to-azul-oceano">Regenerar Chile</span>
             </h1>
 
             <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed max-w-xl">
@@ -47,7 +47,7 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <Link href="/#cta-final">
-                <Button variant="premium" size="lg" className="h-14 px-8 text-lg shadow-[#2D9D78]/25">
+                <Button variant="premium" size="lg" className="h-14 px-8 text-lg shadow-verde-bosque/25">
                   Solicitar Acceso Beta
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>

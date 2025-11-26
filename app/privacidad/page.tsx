@@ -1,3 +1,17 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Política de Privacidad | Simbioma",
+    description: "Política de privacidad de Simbioma. Conoce cómo protegemos tus datos personales, cumplimos con la normativa chilena (Ley 19.628) y garantizamos la seguridad de tu información.",
+    keywords: ["privacidad", "protección de datos", "GDPR", "Ley 19.628", "Chile", "seguridad", "datos personales"],
+    openGraph: {
+        title: "Política de Privacidad | Simbioma",
+        description: "Conoce cómo Simbioma protege tus datos personales y cumple con la normativa de privacidad chilena e internacional.",
+        type: "website",
+        locale: "es_CL",
+    },
+};
+
 export default function PrivacidadPage() {
     return (
         <div className="min-h-screen bg-white">

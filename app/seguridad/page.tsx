@@ -1,4 +1,17 @@
 import { Shield, Lock, Server, RefreshCw, Eye, FileCheck, AlertTriangle, Users } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Seguridad | Simbioma",
+    description: "Conoce las medidas de seguridad de Simbioma: encriptación AES-256, infraestructura certificada ISO 27001, cumplimiento GDPR y protección de datos ambientales estratégicos.",
+    keywords: ["seguridad", "encriptación", "ISO 27001", "SOC 2", "GDPR", "protección de datos", "Chile", "certificaciones"],
+    openGraph: {
+        title: "Seguridad | Simbioma",
+        description: "La seguridad de tus datos ambientales es nuestra prioridad. Infraestructura certificada y las mejores prácticas de la industria.",
+        type: "website",
+        locale: "es_CL",
+    },
+};
 
 export default function SeguridadPage() {
     return (
