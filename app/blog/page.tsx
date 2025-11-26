@@ -12,6 +12,7 @@ export default function BlogPage() {
             date: "26-11-2025",
             author: "Equipo Simbioma",
             image: "/images/blog/gestion-ambiental-hero.png",
+            altText: "Ilustración mostrando la transformación digital de la gestión ambiental con gráficos de datos, indicadores ambientales y conexión entre municipios y empresas",
             category: "Innovación"
         }
     ];
@@ -33,7 +34,7 @@ export default function BlogPage() {
                         <div className="relative h-48 overflow-hidden">
                             <Image
                                 src={post.image}
-                                alt={post.title}
+                                alt={post.altText}
                                 fill
                                 className="object-cover group-hover:scale-105 transition-transform duration-500"
                             />

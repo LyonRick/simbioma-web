@@ -13,7 +13,8 @@ export default function Solucion() {
       icon: Database,
       color: "#2D9D78",
       tags: ["API", "Excel", "IoT", "Sensores"],
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+      altText: "Dashboard mostrando gráficos de análisis de datos ambientales con múltiples fuentes de información integradas en tiempo real"
     },
     {
       id: 2,
@@ -22,7 +23,8 @@ export default function Solucion() {
       icon: LayoutDashboard,
       color: "#1E5F8C",
       tags: ["KPIs", "Proyectos", "Benchmarks"],
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
+      altText: "Pantalla de computador mostrando dashboard con indicadores ambientales, gráficos de tendencias y KPIs de sostenibilidad en tiempo real"
     },
     {
       id: 3,
@@ -31,7 +33,8 @@ export default function Solucion() {
       icon: FileText,
       color: "#F5A623",
       tags: ["SINADER", "GRI", "CDP", "SASB"],
-      image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80"
+      image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80",
+      altText: "Persona revisando documentos de reportes ambientales en tablet, mostrando informes ESG listos para firma electrónica"
     }
   ];
 
@@ -97,7 +100,7 @@ export default function Solucion() {
                   />
                   <Image
                     src={step.image}
-                    alt={step.title}
+                    alt={step.altText}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />

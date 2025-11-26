@@ -10,10 +10,10 @@ export default function TerminosPage() {
                     <section className="mb-12">
                         <h2 className="text-3xl font-bold text-gray-900 mb-6">1. Aceptación de los Términos</h2>
                         <p className="text-gray-700 leading-relaxed mb-4">
-                            Bienvenido a Simbioma. Estos Términos y Condiciones (en adelante, los "Términos") constituyen un acuerdo legal vinculante entre usted (en adelante, el "Usuario", "usted" o "su") y Simbioma SpA (en adelante, "Simbioma", "nosotros", "nuestro" o "nuestra"), con domicilio en Av. Providencia 1234, Of. 601, Santiago, Chile, RUT 77.123.456-7.
+                            Bienvenido a Simbioma. Estos Términos y Condiciones (en adelante, los &quot;Términos&quot;) constituyen un acuerdo legal vinculante entre usted (en adelante, el &quot;Usuario&quot;, &quot;usted&quot; o &quot;su&quot;) y Simbioma SpA (en adelante, &quot;Simbioma&quot;, &quot;nosotros&quot;, &quot;nuestro&quot; o &quot;nuestra&quot;), con domicilio en Av. Providencia 1234, Of. 601, Santiago, Chile, RUT 77.123.456-7.
                         </p>
                         <p className="text-gray-700 leading-relaxed mb-4">
-                            Al acceder, registrarse o utilizar la plataforma Simbioma (el "Servicio"), usted acepta estar legalmente vinculado por estos Términos, nuestra Política de Privacidad y cualquier política adicional referenciada en este documento.
+                            Al acceder, registrarse o utilizar la plataforma Simbioma (el &quot;Servicio&quot;), usted acepta estar legalmente vinculado por estos Términos, nuestra Política de Privacidad y cualquier política adicional referenciada en este documento.
                         </p>
                         <div className="bg-amarillo-sol/10 border-l-4 border-amarillo-sol p-6 rounded-r-lg">
                             <p className="text-gray-800 font-medium">
@@ -36,7 +36,7 @@ export default function TerminosPage() {
                             <li>Gestionar proyectos ambientales y territoriales</li>
                         </ul>
                         <p className="text-gray-700 leading-relaxed">
-                            El Servicio se proporciona "tal cual" y "según disponibilidad". Simbioma se reserva el derecho de modificar, suspender o descontinuar cualquier aspecto del Servicio en cualquier momento, con o sin previo aviso.
+                            El Servicio se proporciona &quot;tal cual&quot; y &quot;según disponibilidad&quot;. Simbioma se reserva el derecho de modificar, suspender o descontinuar cualquier aspecto del Servicio en cualquier momento, con o sin previo aviso.
                         </p>
                     </section>
 
@@ -101,7 +101,7 @@ export default function TerminosPage() {
                         <ul className="list-disc pl-6 space-y-2 text-gray-700 mb-6">
                             <li>Software, código fuente y algoritmos</li>
                             <li>Diseño, interfaz de usuario y experiencia de usuario</li>
-                            <li>Marca "Simbioma", logotipos y elementos visuales</li>
+                            <li>Marca &quot;Simbioma&quot;, logotipos y elementos visuales</li>
                             <li>Documentación, tutoriales y materiales de capacitación</li>
                             <li>Bases de datos y estructuras de datos</li>
                         </ul>

@@ -92,7 +92,7 @@ export default function BlogPostPage() {
                         Según el <strong>Ministerio del Medio Ambiente</strong>, existen más de <strong>12 plataformas oficiales</strong> donde municipios y empresas deben reportar información ambiental: SINADER (residuos), RETC (emisiones), SCAM (calidad del aire), SEIA (evaluación ambiental), entre otros. Cada una con formatos, plazos y requisitos distintos.
                     </p>
                     <p>
-                        <strong>Caso real:</strong> La Municipalidad de Providencia reportó en 2024 que sus 3 funcionarios ambientales dedican el <strong>60% de su jornada laboral</strong> a "copiar y pegar" datos entre sistemas. Esto equivale a <strong>$18 millones anuales</strong> en costos de oportunidad solo en esa comuna.
+                        <strong>Caso real:</strong> La Municipalidad de Providencia reportó en 2024 que sus 3 funcionarios ambientales dedican el <strong>60% de su jornada laboral</strong> a &quot;copiar y pegar&quot; datos entre sistemas. Esto equivale a <strong>$18 millones anuales</strong> en costos de oportunidad solo en esa comuna.
                     </p>
 
                     <h3>2. Invisibilidad del Impacto Territorial</h3>
@@ -108,7 +108,7 @@ export default function BlogPostPage() {
 
                     <h3>3. Barrera para la Colaboración Público-Privada</h3>
                     <p>
-                        La <strong>Ley REP</strong> (Responsabilidad Extendida del Productor) exige colaboración entre empresas y municipios para la gestión de residuos. Sin embargo, el 82% de los gestores de residuos reportan "dificultades severas" para compartir datos operativos con gobiernos locales debido a incompatibilidad de sistemas.
+                        La <strong>Ley REP</strong> (Responsabilidad Extendida del Productor) exige colaboración entre empresas y municipios para la gestión de residuos. Sin embargo, el 82% de los gestores de residuos reportan &quot;dificultades severas&quot; para compartir datos operativos con gobiernos locales debido a incompatibilidad de sistemas.
                     </p>
 
                     <div className="not-prose bg-amarillo-sol/10 border-l-4 border-amarillo-sol p-6 rounded-r-lg my-8">
@@ -126,7 +126,7 @@ export default function BlogPostPage() {
                     </h2>
 
                     <p>
-                        Simbioma no es "otro software más". Es la <strong>primera plataforma dual chilena</strong> diseñada específicamente para cerrar la brecha entre gobiernos locales y empresas en la gestión ambiental y territorial.
+                        Simbioma no es &quot;otro software más&quot;. Es la <strong>primera plataforma dual chilena</strong> diseñada específicamente para cerrar la brecha entre gobiernos locales y empresas en la gestión ambiental y territorial.
                     </p>
 
                     <h3>🔗 1. Consolidación Automática de Fuentes de Datos</h3>

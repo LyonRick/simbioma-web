@@ -10,7 +10,7 @@ export default function PrivacidadPage() {
                     <section className="mb-12">
                         <h2 className="text-3xl font-bold text-gray-900 mb-6">Introducción</h2>
                         <p className="text-gray-700 leading-relaxed mb-4">
-                            Simbioma SpA (en adelante "Simbioma", "nosotros", "nuestro" o "nuestra") valora su privacidad y se compromete a proteger sus datos personales. Esta Política de Privacidad describe cómo recopilamos, usamos, almacenamos y protegemos su información personal cuando utiliza nuestra plataforma de gestión ambiental y territorial.
+                            Simbioma SpA (en adelante &quot;Simbioma&quot;, &quot;nosotros&quot;, &quot;nuestro&quot; o &quot;nuestra&quot;) valora su privacidad y se compromete a proteger sus datos personales. Esta Política de Privacidad describe cómo recopilamos, usamos, almacenamos y protegemos su información personal cuando utiliza nuestra plataforma de gestión ambiental y territorial.
                         </p>
                         <p className="text-gray-700 leading-relaxed">
                             Si tiene preguntas o inquietudes sobre nuestra política o prácticas de privacidad, no dude en ponerse en contacto con nuestro Oficial de Privacidad en{' '}

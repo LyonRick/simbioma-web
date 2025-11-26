@@ -66,40 +66,60 @@ export default function CTAFinal() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto">
               <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="beta-name" className="sr-only">Nombre completo</label>
+                  <input
+                    id="beta-name"
+                    required
+                    placeholder="Nombre completo"
+                    aria-label="Nombre completo"
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20"
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="beta-email" className="sr-only">Email corporativo</label>
+                  <input
+                    id="beta-email"
+                    required
+                    type="email"
+                    placeholder="Email corporativo"
+                    aria-label="Email corporativo"
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20"
+                    value={formData.email}
+                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="beta-org" className="sr-only">Organización</label>
                 <input
+                  id="beta-org"
                   required
-                  placeholder="Nombre completo"
+                  placeholder="Organización"
+                  aria-label="Organización"
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20"
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                />
-                <input
-                  required
-                  type="email"
-                  placeholder="Email corporativo"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20"
-                  value={formData.email}
-                  onChange={e => setFormData({ ...formData, email: e.target.value })}
+                  value={formData.organization}
+                  onChange={e => setFormData({ ...formData, organization: e.target.value })}
                 />
               </div>
-              <input
-                required
-                placeholder="Organización"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20"
-                value={formData.organization}
-                onChange={e => setFormData({ ...formData, organization: e.target.value })}
-              />
-              <select
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20 [&>option]:text-gray-900"
-                value={formData.type}
-                onChange={e => setFormData({ ...formData, type: e.target.value })}
-              >
-                <option value="" disabled>Tipo de Organización</option>
-                <option value="gobierno">Gobierno Local / Regional</option>
-                <option value="empresa">Empresa Privada</option>
-                <option value="otro">Otro</option>
-              </select>
+              <div>
+                <label htmlFor="beta-type" className="sr-only">Tipo de organización</label>
+                <select
+                  id="beta-type"
+                  required
+                  aria-label="Tipo de organización"
+                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20 [&>option]:text-gray-900"
+                  value={formData.type}
+                  onChange={e => setFormData({ ...formData, type: e.target.value })}
+                >
+                  <option value="" disabled>Tipo de Organización</option>
+                  <option value="gobierno">Gobierno Local / Regional</option>
+                  <option value="empresa">Empresa Privada</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
 
               <Button
                 type="submit"
