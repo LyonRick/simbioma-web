@@ -21,10 +21,10 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { name: "Soluciones", href: "#soluciones" },
-    { name: "Para Gobiernos", href: "#gobiernos" },
-    { name: "Para Empresas", href: "#empresas" },
-    { name: "Recursos", href: "#recursos" },
+    { name: "Soluciones", href: "#solucion" },
+    { name: "Para Gobiernos", href: "#segmentacion" },
+    { name: "Para Empresas", href: "#segmentacion" },
+    { name: "Recursos", href: "#faq" },
     { name: "Blog", href: "/blog" },
   ];
 

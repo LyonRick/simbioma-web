@@ -127,7 +127,10 @@ export default function CTAFinal() {
                 className="w-full h-14 text-lg font-bold bg-amarillo-sol hover:bg-amarillo-sol-dark text-white border-0 shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all"
               >
                 {status === "loading" ? (
-                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    <span>Enviando...</span>
+                  </div>
                 ) : (
                   <>
                     Solicitar Acceso Beta

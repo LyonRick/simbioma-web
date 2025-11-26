@@ -1,0 +1,19 @@
+{
+  "allowedCommands": [
+    "git",
+    "npm",
+    "python",
+    "pytest",
+    "jest"
+  ],
+  "restrictedPaths": [
+    ".env",
+    "secrets/",
+    "credentials.json"
+  ],
+  "autoApprove": {
+    "read": true,
+    "write": false,
+    "execute": false
+  }
+}
