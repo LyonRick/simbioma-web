@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Home, Search, FileQuestion, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
     return (
@@ -29,7 +29,7 @@ export default function NotFound() {
                 {/* Primary Action */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                     <Link href="/">
-                        <Button variant="premium" size="lg" className="w-full sm:w-auto">
+                        <Button variant="default" size="lg" className="w-full sm:w-auto">
                             <Home className="mr-2 w-5 h-5" />
                             Volver al Inicio
                         </Button>

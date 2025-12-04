@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Building2, Landmark, ArrowRight, Check } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export default function Segmentacion() {
   return (
@@ -57,7 +57,7 @@ export default function Segmentacion() {
                 </li>
               ))}
             </ul>
-            <Button className="w-full bg-verde-bosque hover:bg-verde-bosque-dark text-white shadow-lg shadow-verde-bosque/20">
+            <Button className="w-full bg-[#2D9D78] hover:bg-[#247A5F] text-white shadow-lg shadow-[#2D9D78]/20">
               Ver Solución Gobierno
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
@@ -91,7 +91,7 @@ export default function Segmentacion() {
                 </li>
               ))}
             </ul>
-            <Button className="w-full bg-azul-oceano hover:bg-azul-oceano-dark text-white shadow-lg shadow-azul-oceano/20">
+            <Button className="w-full bg-[#1E5F8C] hover:bg-[#164A6E] text-white shadow-lg shadow-[#1E5F8C]/20">
               Ver Solución Empresas
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>

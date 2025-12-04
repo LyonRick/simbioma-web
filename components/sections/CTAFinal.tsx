@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export default function CTAFinal() {
   const [formData, setFormData] = useState({
@@ -12,14 +12,38 @@ export default function CTAFinal() {
     organization: "",
     type: ""
   });
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setStatus("success");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al enviar la solicitud');
+      }
+
+      setStatus("success");
+      // Limpiar formulario
+      setFormData({ name: "", email: "", organization: "", type: "" });
+
+    } catch (error) {
+      console.error('Error:', error);
+      setStatus("error");
+      setErrorMessage(error instanceof Error ? error.message : 'Error inesperado');
+    }
   };
 
   return (
@@ -30,7 +54,7 @@ export default function CTAFinal() {
       {/* Decorative Circles */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20">
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-white blur-3xl" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-amarillo-sol blur-3xl" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#F5A623] blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
@@ -61,6 +85,27 @@ export default function CTAFinal() {
                 onClick={() => setStatus("idle")}
               >
                 Enviar otra solicitud
+              </Button>
+            </motion.div>
+          ) : status === "error" ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-12"
+            >
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <svg className="w-10 h-10 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Error al Enviar</h3>
+              <p className="text-white/80 mb-4">{errorMessage}</p>
+              <Button
+                variant="ghost"
+                className="mt-6 text-white hover:bg-white/20"
+                onClick={() => setStatus("idle")}
+              >
+                Intentar nuevamente
               </Button>
             </motion.div>
           ) : (

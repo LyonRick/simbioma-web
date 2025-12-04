@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import Logo from "@/components/ui/Logo";
+import { Logo } from "@/components/brand/Logo";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,10 +21,10 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { name: "Soluciones", href: "#solucion" },
-    { name: "Para Gobiernos", href: "#segmentacion" },
-    { name: "Para Empresas", href: "#segmentacion" },
-    { name: "Recursos", href: "#faq" },
+    { name: "Soluciones", href: "/#solucion" },
+    { name: "Para Gobiernos", href: "/#segmentacion" },
+    { name: "Para Empresas", href: "/#segmentacion" },
+    { name: "Recursos", href: "/#faq" },
     { name: "Blog", href: "/blog" },
   ];
 
@@ -40,7 +40,7 @@ export default function Header() {
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="group">
-          <Logo classNameText={isScrolled ? "text-gray-900" : "text-gray-900"} />
+          <Logo className={isScrolled ? "text-gray-900" : "text-gray-900"} />
         </Link>
 
         {/* Desktop Nav */}
@@ -62,7 +62,7 @@ export default function Header() {
             Iniciar Sesión
           </Link>
           <Link href="/#cta-final">
-            <Button variant="premium" size="sm">
+            <Button variant="default" size="sm">
               Solicitar Demo
             </Button>
           </Link>
@@ -102,7 +102,7 @@ export default function Header() {
                   Iniciar Sesión
                 </Link>
                 <Link href="/#cta-final">
-                  <Button variant="premium" className="w-full">
+                  <Button variant="default" className="w-full">
                     Solicitar Demo
                   </Button>
                 </Link>

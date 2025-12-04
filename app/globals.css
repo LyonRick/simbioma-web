@@ -2,14 +2,14 @@
 
 @layer base {
   :root {
-    /* Brand Colors Converted to HSL for Shadcn compatibility */
-    /* Verde Bosque: #2D9D78 -> 160 55% 40% */
-    /* Azul Océano: #1E5F8C -> 205 65% 33% */
-    /* Amarillo Sol: #F5A623 -> 37 90% 55% */
+    /* Eco-Modernism Palette */
+    /* Warm Stone: #FAFAF9 -> 60 9% 98% */
+    /* Deep Emerald: #059669 -> 161 94% 30% */
+    /* Ocean Teal: #0E7490 -> 193 82% 31% */
+    /* Terracotta: #EA580C -> 15 90% 48% */
 
-    --background: 0 0% 100%;
-    --foreground: 215 28% 17%;
-    /* #1F2937 */
+    --background: 60 9% 98%; /* Warm Stone */
+    --foreground: 215 28% 17%; /* Near Black */
 
     --card: 0 0% 100%;
     --card-foreground: 215 28% 17%;
@@ -17,59 +17,60 @@
     --popover: 0 0% 100%;
     --popover-foreground: 215 28% 17%;
 
-    --primary: 160 55% 40%;
-    /* Verde Bosque */
+    --primary: 161 94% 30%; /* Deep Emerald */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 205 65% 33%;
-    /* Azul Océano */
+    --secondary: 193 82% 31%; /* Ocean Teal */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 37 90% 55%;
-    /* Amarillo Sol */
-    --accent-foreground: 215 28% 17%;
+    --accent: 15 90% 48%; /* Terracotta */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 160 55% 40%;
+    --ring: 161 94% 30%; /* Deep Emerald */
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Forest Night: #0A1612 -> 160 38% 6% */
+    /* Deep Moss: #1C2624 -> 168 15% 13% */
+    /* Bright Emerald: #10B981 -> 160 84% 39% */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --background: 160 38% 6%; /* Forest Night */
+    --foreground: 60 9% 98%; /* Off-white */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --card: 168 15% 13%; /* Deep Moss */
+    --card-foreground: 60 9% 98%;
 
-    --primary: 160 55% 40%;
+    --popover: 168 15% 13%;
+    --popover-foreground: 60 9% 98%;
+
+    --primary: 160 84% 39%; /* Bright Emerald */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 205 65% 33%;
+    --secondary: 193 82% 31%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 165 20% 15%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 37 90% 55%;
+    --accent: 15 90% 48%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 160 55% 40%;
+    --border: 165 20% 15%;
+    --input: 165 20% 15%;
+    --ring: 160 84% 39%;
   }
 }
 
@@ -78,6 +79,10 @@
     border-color: hsl(var(--border));
     border-style: solid;
     border-width: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {

@@ -14,16 +14,24 @@ export default function ConditionalLayout({
     const pathname = usePathname();
     const isFirstRender = useRef(true);
 
-    // Scroll to top ONLY on first render, but respect hash navigation
+    // Disable smooth scrolling temporarily on route changes to prevent jarring scroll
+    // but keep it enabled for hash navigation
     useEffect(() => {
-        if (isFirstRender.current) {
-            // Only scroll to top if there's no hash in the URL
-            if (!window.location.hash) {
-                window.scrollTo(0, 0);
-            }
-            isFirstRender.current = false;
+        // On route change, temporarily disable smooth scrolling
+        document.documentElement.style.scrollBehavior = 'auto';
+
+        // Scroll to top only if there's no hash
+        if (!window.location.hash) {
+            window.scrollTo(0, 0);
         }
-    }, []);
+
+        // Re-enable smooth scrolling after a short delay
+        const timer = setTimeout(() => {
+            document.documentElement.style.scrollBehavior = 'smooth';
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, [pathname]);
 
     // Don't show Header/Footer on dashboard routes
     const isDashboard = pathname?.startsWith("/dashboard");

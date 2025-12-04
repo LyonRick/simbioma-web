@@ -13,19 +13,10 @@ Este documento detalla la hoja de ruta para alcanzar el MVP 1.0, enfocado en una
 - [ ] **Indicadores de Estado Beta**:
   - [ ] Banner o Badge visible "Versión Beta / Acceso Anticipado".
   - [ ] Disclaimer en el footer sobre la fase de desarrollo.
-
-## 2. Core de la Plataforma (Backend & Auth)
-**Objetivo:** Cimientos seguros y escalables.
-- [ ] **Configuración Supabase**:
-  - [ ] Crear proyecto y configurar variables de entorno.
-  - [ ] Definir tablas base: Usar docs\architecture\database-schema.md como referencia principal para la base de datos versión 1.0 a implementar.
-- [ ] **Autenticación**:
-  - [ ] Implementar Login (Email/Password + Magic Link opcional).
-  - [ ] Implementar Registro con selección de rol (Funcionario/Empresa).
-  - [ ] Recuperación de contraseña.
 - [ ] **Layout de Aplicación**:
+   - [ ] Estructura de Login, botones, funcionalidad formulario, seguridad
   - [ ] Estructura de Dashboard (Sidebar colapsable, Header con perfil). Uso de shadcn para componentes.
-  - [ ] Protección de rutas (Middleware de Next.js para `/dashboard`).
+  - [x] Protección de rutas (Middleware de Next.js para `/dashboard`).
 
 ## 3. Módulo Funcional: "Gestión Territorial" (MVP Municipal)
 **Objetivo:** Una herramienta de uso diario para funcionarios municipales.
@@ -35,11 +26,13 @@ Este documento detalla la hoja de ruta para alcanzar el MVP 1.0, enfocado en una
   - [ ] Cargar indicadores históricos asociados a los territorios del país, con el objetivo de ser usados como base para generar indicadores futuros.
   - [ ] Crear formulario de carga de indicadores (ej. Toneladas de residuos, Consumo hídrico, Emisiones) manuales. La periodicidad de carga de los indicadores de un gobierno local es relativo (diario, semanal o mensual).
   - [ ] Definir UX para la selección de indicadores desde el catalogo o la carga de indicadores manualmente (sea formulario o sea excel). 
-- [ ] **Dashboard Visual**:
-  - [ ] Crear visualización de registros históricos + indicadores cargados manualmente + indicadores futuros. El usuario puede ver el comportamiento individual de cada indicador en su territorio (por ejemplo, como ha variado el crecimiento de los residuos en su territorio, reciclaje, agua consumida, electricidad consumida, entre otros.)
-  - [ ] Gráficos de tendencia (Línea/Barras) para los indicadores cargados.
-  - [ ] Tarjetas de resumen (KPIs del mes actual vs anterior).
-  - [ ] Idealmente, crear breve resumen que describa la situación de la comuna/territorio respecto a cada indicador. Por ejemplo, si el indicador es el consumo de agua, el resumen podría ser "El consumo de agua en la comuna X ha disminuido en el último año en Y%". Su comportamiento muestra un crecimiento negativo los últimos 5 años. Comparativamente, su comuna se encuentra de los municipios con menor consumo de agua."
+  - [ ] **Dashboard Visual (Design System v2.0)**:
+    - [ ] Implementar "Eco-Modernism" aesthetic (Forest Night dark mode, Warm Stone light mode).
+    - [ ] Implementar "PowerPoint-Ready" layout (Bento Grid, sin scroll horizontal forzado).
+    - [ ] Crear visualización de registros históricos + indicadores cargados manualmente + indicadores futuros.
+    - [ ] Gráficos de tendencia (Línea/Barras) minimalistas y elegantes (sin grid lines pesadas).
+    - [ ] Tarjetas de resumen (KPIs) compactas con sparklines.
+    - [ ] Idealmente, crear breve resumen que describa la situación de la comuna/territorio respecto a cada indicador.
 - [ ] **Funcionalidad Clave**:
   - [ ] Exportación simple de datos (CSV/Excel) o vista de impresión de reporte.
   - [ ] Exportación de reporte en formato PDF (opción 1, opción 2 es Word).

@@ -1,0 +1,1176 @@
+-- ==============================================================================
+-- MIGRATION: SINADER Catalogs & Subscription Plans
+-- ==============================================================================
+
+-- 1. LER Codes (Lista Europea de Residuos)
+CREATE TABLE IF NOT EXISTS public.ler_codes (
+    id text PRIMARY KEY,
+    description text NOT NULL,
+    chapter_code text,
+    chapter_description text,
+    subchapter_code text,
+    subchapter_description text,
+    created_at timestamp with time zone DEFAULT now()
+);
+
+-- 2. Waste Treatments (Operaciones de Eliminación y Valorización)
+CREATE TABLE IF NOT EXISTS public.waste_treatments (
+    code text PRIMARY KEY,
+    name text NOT NULL,
+    category text,
+    subcategory text,
+    description text,
+    created_at timestamp with time zone DEFAULT now()
+);
+
+-- 3. Subscription Plans
+CREATE TABLE IF NOT EXISTS public.subscription_plans (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    code text NOT NULL UNIQUE,
+    name text NOT NULL,
+    description text,
+    price_clp integer DEFAULT 0,
+    features jsonb DEFAULT '{}'::jsonb,
+    limits jsonb DEFAULT '{}'::jsonb,
+    is_active boolean DEFAULT true,
+    created_at timestamp with time zone DEFAULT now()
+);
+
+-- Enable RLS
+ALTER TABLE public.ler_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.waste_treatments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscription_plans ENABLE ROW LEVEL SECURITY;
+
+-- Policies (Public read access)
+DROP POLICY IF EXISTS "Allow public read access on ler_codes" ON public.ler_codes;
+CREATE POLICY "Allow public read access on ler_codes" ON public.ler_codes FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public read access on waste_treatments" ON public.waste_treatments;
+CREATE POLICY "Allow public read access on waste_treatments" ON public.waste_treatments FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public read access on subscription_plans" ON public.subscription_plans;
+CREATE POLICY "Allow public read access on subscription_plans" ON public.subscription_plans FOR SELECT USING (true);
+
+-- ==============================================================================
+-- SEED DATA FOLLOWS
+-- ==============================================================================
+-- ==============================================================================
+-- SEED DATA: LER CODES (Lista Europea de Residuos)
+-- ==============================================================================
+TRUNCATE TABLE public.ler_codes CASCADE;
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 01 01', 'Residuos de la extracción de minerales metálicos', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '01', 'Residuos de la extracción de minerales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 01 02', 'Residuos de la extracción de minerales no metálicos', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '01', 'Residuos de la extracción de minerales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 03 06', 'Estériles distintos de los mencionados en los códigos 01 03 04 y 01 03 05', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '03', 'Residuos de la transformación física y química de minerales metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 03 08', 'Residuos de polvo y arenilla distintos de los mencionados en el código 01 03 07', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '03', 'Residuos de la transformación física y química de minerales metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 03 09', 'Lodos rojos de la producción de alúmina distintos de los mencionados en el código 01 03 07', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '03', 'Residuos de la transformación física y química de minerales metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 03 99', 'Residuos no especificados en otra categoría', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '03', 'Residuos de la transformación física y química de minerales metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 04 08', 'Residuos de grava y rocas trituradas distintos de los mencionados en el código 01 04 07', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '04', 'Residuos de la transformación física y química de minerales no metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 04 09', 'Residuos de arena y arcillas', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '04', 'Residuos de la transformación física y química de minerales no metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 04 10', 'Residuos de polvo y arenilla distintos de los mencionados en el código 01 04 07', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '04', 'Residuos de la transformación física y química de minerales no metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 04 11', 'Residuos de la transformación de potasa y sal gema distintos de los mencionados en el código 01 04 07', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '04', 'Residuos de la transformación física y química de minerales no metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 04 12', 'Estériles y otros residuos del lavado y limpieza de minerales, distintos de los mencionados en los códigos 01 04 07 y 01 04 11', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '04', 'Residuos de la transformación física y química de minerales no metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 04 13', 'Residuos del corte y serrado de piedra distintos de los mencionados en el código 01 04 07', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '04', 'Residuos de la transformación física y química de minerales no metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 04 99', 'Residuos no especificados en otra categoría', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '04', 'Residuos de la transformación física y química de minerales no metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 05 04', 'Lodos y residuos de perforaciones que contienen agua dulce', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '05', 'Lodos y otros residuos de perforaciones');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 05 07', 'Lodos y otros residuos de perforaciones que contienen sales de bario distintos de los mencionados en los códigos 01 05 05 y 01 05 06', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '05', 'Lodos y otros residuos de perforaciones');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 05 08', 'Lodos y otros residuos de perforaciones que contienen cloruros distintos de los mencionados en los códigos 01 05 05 y 01 05 06', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '05', 'Lodos y otros residuos de perforaciones');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('01 05 99', 'Residuos no especificados en otra categoría', '01', 'Residuos de la prospección, extracción de minas y canteras y tratamientos físicos y químicos de minerales', '05', 'Lodos y otros residuos de perforaciones');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 01 01', 'Lodos de lavado y limpieza', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '01', 'Residuos de la agricultura, horticultura, silvicultura y caza');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 01 02', 'Residuos de tejidos de animales', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '01', 'Residuos de la agricultura, horticultura, silvicultura y caza');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 01 03', 'Residuos de tejidos de vegetales', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '01', 'Residuos de la agricultura, horticultura, silvicultura y caza');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 01 04', 'Residuos de plásticos (excepto embalajes)', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '01', 'Residuos de la agricultura, horticultura, silvicultura y caza');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 01 06', 'Heces de animales, orina y estiércol (incluida paja podrida) y efluentes recogidos selectivamente y tratados fuera del lugar donde se generan', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '01', 'Residuos de la agricultura, horticultura, silvicultura y caza');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 01 07', 'Residuos de la silvicultura', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '01', 'Residuos de la agricultura, horticultura, silvicultura y caza');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 01 09', 'Residuos agroquímicos distintos de los mencionados en el código 02 01 08', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '01', 'Residuos de la agricultura, horticultura, silvicultura y caza');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 01 10', 'Residuos metálicos', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '01', 'Residuos de la agricultura, horticultura, silvicultura y caza');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 01 99', 'Residuos no especificados en otra categoría', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '01', 'Residuos de la agricultura, horticultura, silvicultura y caza');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 02 01', 'Lodos de lavado y limpieza', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '02', 'Residuos de la preparación y elaboración de carne y otros alimentos de origen animal');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 02 02', 'Residuos de tejidos de animales', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '02', 'Residuos de la preparación y elaboración de carne y otros alimentos de origen animal');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 02 03', 'Materiales inadecuados para el consumo o la elaboración', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '02', 'Residuos de la preparación y elaboración de carne y otros alimentos de origen animal');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 02 04', 'Lodos del tratamiento in situ de efluentes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '02', 'Residuos de la preparación y elaboración de carne y otros alimentos de origen animal');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 02 99', 'Residuos no especificados en otra categoría', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '02', 'Residuos de la preparación y elaboración de carne y otros alimentos de origen animal');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 03 01', 'Lodos de lavado, limpieza, pelado, centrifugado y separación', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '03', 'Residuos de la preparación y elaboración de frutas, hortalizas, cereales, aceites comestibles, cacao, café, té y tabaco; producción de conservas; producción de levadura y extracto de levadura, preparación y fermentación de melazas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 03 02', 'Residuos de conservantes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '03', 'Residuos de la preparación y elaboración de frutas, hortalizas, cereales, aceites comestibles, cacao, café, té y tabaco; producción de conservas; producción de levadura y extracto de levadura, preparación y fermentación de melazas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 03 03', 'Residuos de la extracción con disolventes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '03', 'Residuos de la preparación y elaboración de frutas, hortalizas, cereales, aceites comestibles, cacao, café, té y tabaco; producción de conservas; producción de levadura y extracto de levadura, preparación y fermentación de melazas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 03 04', 'Materiales inadecuados para el consumo o la elaboración', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '03', 'Residuos de la preparación y elaboración de frutas, hortalizas, cereales, aceites comestibles, cacao, café, té y tabaco; producción de conservas; producción de levadura y extracto de levadura, preparación y fermentación de melazas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 03 05', 'Lodos del tratamiento in situ de efluentes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '03', 'Residuos de la preparación y elaboración de frutas, hortalizas, cereales, aceites comestibles, cacao, café, té y tabaco; producción de conservas; producción de levadura y extracto de levadura, preparación y fermentación de melazas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 03 99', 'Residuos no especificados en otra categoría', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '03', 'Residuos de la preparación y elaboración de frutas, hortalizas, cereales, aceites comestibles, cacao, café, té y tabaco; producción de conservas; producción de levadura y extracto de levadura, preparación y fermentación de melazas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 04 01', 'Tierra procedente de la limpieza y lavado de la remolacha', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '04', 'Residuos de la elaboración de azúcar');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 04 02', 'Carbonato cálcico fuera de especificación', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '04', 'Residuos de la elaboración de azúcar');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 04 03', 'Lodos del tratamiento in situ de efluentes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '04', 'Residuos de la elaboración de azúcar');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 04 99', 'Residuos no especificados en otra categoría', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '04', 'Residuos de la elaboración de azúcar');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 05 01', 'Materiales inadecuados para el consumo o la elaboración', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '05', 'Residuos de la industria de productos lácteos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 05 02', 'Lodos del tratamiento in situ de efluentes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '05', 'Residuos de la industria de productos lácteos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 05 99', 'Residuos no especificados en otra categoría', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '05', 'Residuos de la industria de productos lácteos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 06 01', 'Materiales inadecuados para el consumo o la elaboración', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '06', 'Residuos de la industria de panadería y pastelería');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 06 02', 'Residuos de conservantes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '06', 'Residuos de la industria de panadería y pastelería');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 06 03', 'Lodos del tratamiento in situ de efluentes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '06', 'Residuos de la industria de panadería y pastelería');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 06 99', 'Residuos no especificados en otra categoría', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '06', 'Residuos de la industria de panadería y pastelería');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 07 01', 'Residuos de lavado, limpieza y reducción mecánica de materias primas', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '07', 'Residuos de la producción de bebidas alcohólicas y no alcohólicas (excepto café, té y cacao)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 07 02', 'Residuos de la destilación de alcoholes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '07', 'Residuos de la producción de bebidas alcohólicas y no alcohólicas (excepto café, té y cacao)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 07 03', 'Residuos del tratamiento químico', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '07', 'Residuos de la producción de bebidas alcohólicas y no alcohólicas (excepto café, té y cacao)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 07 04', 'Materiales inadecuados para el consumo o la elaboración', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '07', 'Residuos de la producción de bebidas alcohólicas y no alcohólicas (excepto café, té y cacao)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 07 05', 'Lodos del tratamiento in situ de efluentes', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '07', 'Residuos de la producción de bebidas alcohólicas y no alcohólicas (excepto café, té y cacao)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('02 07 99', 'Residuos no especificados en otra categoría', '02', 'Residuos de la agricultura, horticultura, silvicultura y caza; residuos de la preparación y elaboración de alimentos', '07', 'Residuos de la producción de bebidas alcohólicas y no alcohólicas (excepto café, té y cacao)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 01 01', 'Residuos de corteza y corcho', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '01', 'Residuos de la transformación de la madera y de la producción de tableros y muebles');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 01 05', 'Serrín, virutas, recortes, madera, tableros de partículas y chapas distintos de los mencionados en el código 03 01 04', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '01', 'Residuos de la transformación de la madera y de la producción de tableros y muebles');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 01 99', 'Residuos no especificados en otra categoría', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '01', 'Residuos de la transformación de la madera y de la producción de tableros y muebles');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 02 99', 'Conservantes de la madera no especificados en otra categoría', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '02', 'Residuos de los tratamientos de conservación de la madera');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 03 01', 'Residuos de corteza y madera', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '03', 'Residuos de la producción y transformación de pasta de papel, papel y cartón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 03 02', 'Lodos de lejías verdes (procedentes de la recuperación de lejías de cocción)', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '03', 'Residuos de la producción y transformación de pasta de papel, papel y cartón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 03 05', 'Lodos de destintado procedentes del reciclado de papel', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '03', 'Residuos de la producción y transformación de pasta de papel, papel y cartón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 03 07', 'Desechos, separados mecánicamente, de pasta elaborada a partir de residuos de papel y cartón', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '03', 'Residuos de la producción y transformación de pasta de papel, papel y cartón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 03 08', 'Residuos procedentes de la clasificación de papel y cartón destinados al reciclado', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '03', 'Residuos de la producción y transformación de pasta de papel, papel y cartón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 03 09', 'Residuos de lodos calizos', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '03', 'Residuos de la producción y transformación de pasta de papel, papel y cartón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 03 10', 'Desechos de fibras y lodos de fibras, de materiales de carga y de estucado, obtenidos por separación mecánica', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '03', 'Residuos de la producción y transformación de pasta de papel, papel y cartón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 03 11', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código 03 03 10', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '03', 'Residuos de la producción y transformación de pasta de papel, papel y cartón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('03 03 99', 'Residuos no especificados en otra categoría', '03', 'Residuos de la transformación de la madera y de la producción de tableros y muebles, pasta de papel, papel y cartón', '03', 'Residuos de la producción y transformación de pasta de papel, papel y cartón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 01 01', 'Carnazas y serrajes de encalado', '04', 'Residuos de las industrias del cuero, de la piel y textil', '01', 'Residuos de las industrias del cuero y de la piel');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 01 02', 'Residuos de encalado', '04', 'Residuos de las industrias del cuero, de la piel y textil', '01', 'Residuos de las industrias del cuero y de la piel');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 01 04', 'Residuos líquidos de curtición que contienen cromo', '04', 'Residuos de las industrias del cuero, de la piel y textil', '01', 'Residuos de las industrias del cuero y de la piel');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 01 05', 'Residuos líquidos de curtición que no contienen cromo', '04', 'Residuos de las industrias del cuero, de la piel y textil', '01', 'Residuos de las industrias del cuero y de la piel');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 01 06', 'Lodos, en particular los procedentes del tratamiento in situ de efluentes, que contienen cromo', '04', 'Residuos de las industrias del cuero, de la piel y textil', '01', 'Residuos de las industrias del cuero y de la piel');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 01 07', 'Lodos, en particular los procedentes del tratamiento in situ de efluentes, que no contienen cromo', '04', 'Residuos de las industrias del cuero, de la piel y textil', '01', 'Residuos de las industrias del cuero y de la piel');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 01 08', 'Residuos de piel curtida (serrajes, rebajaduras, recortes y polvo de esmerilado) que contienen cromo', '04', 'Residuos de las industrias del cuero, de la piel y textil', '01', 'Residuos de las industrias del cuero y de la piel');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 01 09', 'Residuos de confección y acabado', '04', 'Residuos de las industrias del cuero, de la piel y textil', '01', 'Residuos de las industrias del cuero y de la piel');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 01 99', 'Residuos no especificados en otra categoría', '04', 'Residuos de las industrias del cuero, de la piel y textil', '01', 'Residuos de las industrias del cuero y de la piel');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 02 09', 'Residuos de materiales compuestos (textiles impregnados, elastómeros, plastómeros)', '04', 'Residuos de las industrias del cuero, de la piel y textil', '02', 'Residuos de la industria textil');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 02 10', 'Materia orgánica de productos naturales (por ejemplo grasa, cera)', '04', 'Residuos de las industrias del cuero, de la piel y textil', '02', 'Residuos de la industria textil');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 02 15', 'Residuos del acabado distintos de los especificados en el código 04 02 14', '04', 'Residuos de las industrias del cuero, de la piel y textil', '02', 'Residuos de la industria textil');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 02 17', 'Colorantes y pigmentos distintos de los mencionados en el código 04 02 16', '04', 'Residuos de las industrias del cuero, de la piel y textil', '02', 'Residuos de la industria textil');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 02 20', 'Lodos del tratamiento in situ de efluentes, distintos de los mencionados en el código 04 02 19', '04', 'Residuos de las industrias del cuero, de la piel y textil', '02', 'Residuos de la industria textil');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 02 21', 'Residuos de fibras textiles no procesadas', '04', 'Residuos de las industrias del cuero, de la piel y textil', '02', 'Residuos de la industria textil');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 02 22', 'Residuos de fibras textiles procesadas', '04', 'Residuos de las industrias del cuero, de la piel y textil', '02', 'Residuos de la industria textil');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('04 02 99', 'Residuos no especificados en otra categoría', '04', 'Residuos de las industrias del cuero, de la piel y textil', '02', 'Residuos de la industria textil');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 01 10', 'Lodos del tratamiento in situ de efluentes, distintos de los mencionados en el código 05 01 09', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '01', 'Residuos del refino de petróleo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 01 13', 'Lodos procedentes del agua de alimentación de calderas', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '01', 'Residuos del refino de petróleo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 01 14', 'Residuos de columnas de refrigeración', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '01', 'Residuos del refino de petróleo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 01 16', 'Residuos que contienen azufre procedentes de la desulfuración del petróleo', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '01', 'Residuos del refino de petróleo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 01 17', 'Betunes', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '01', 'Residuos del refino de petróleo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 01 99', 'Residuos no especificados en otra categoría', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '01', 'Residuos del refino de petróleo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 06 04', 'Residuos de columnas de refrigeración', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '06', 'Residuos del tratamiento pirolítico del carbón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 06 99', 'Residuos no especificados en otra categoría', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '06', 'Residuos del tratamiento pirolítico del carbón');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 07 02', 'Residuos que contienen azufre', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '07', 'Residuos de la purificación y transporte de gas natural');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('05 07 99', 'Residuos no especificados en otra categoría', '05', 'Residuos del refino de petróleo, purificación del gas natural y tratamiento pirolítico del carbón', '07', 'Residuos de la purificación y transporte de gas natural');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 01 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '01', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de ácidos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 02 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '02', 'Residuos de la FFDU de bases');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 03 14', 'Sales sólidas y soluciones distintas de las mencionadas en los códigos 06 03 11 y 06 03 13', '06', 'Residuos de procesos químicos inorgánicos', '03', 'Residuos de la FFDU de sales y sus soluciones y de óxidos metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 03 16', 'Oxidos metálicos distintos de los mencionados en el código 06 03 15', '06', 'Residuos de procesos químicos inorgánicos', '03', 'Residuos de la FFDU de sales y sus soluciones y de óxidos metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 03 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '03', 'Residuos de la FFDU de sales y sus soluciones y de óxidos metálicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 04 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '04', 'Residuos que contienen metales distintos de los mencionados en el código 06 03');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 05 03', 'Lodos del tratamiento in situ de efluentes, distintos de los mencionados en el código 06 05 02', '06', 'Residuos de procesos químicos inorgánicos', '05', 'Lodos del tratamiento in situ de efluentes');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 06 03', 'Residuos que contienen sulfuros distintos de los mencionados en el código 06 06 02', '06', 'Residuos de procesos químicos inorgánicos', '06', 'Residuos de la FFDU de productos químicos que contienen azufre, de procesos químicos del azufre y de procesos de desulfuración');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 06 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '06', 'Residuos de la FFDU de productos químicos que contienen azufre, de procesos químicos del azufre y de procesos de desulfuración');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 07 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '07', 'Residuos de la FFDU de halógenos y de procesos químicos de los halógenos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 08 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '08', 'Residuos de la FFDU del silicio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 09 02', 'Escorias de fósforo', '06', 'Residuos de procesos químicos inorgánicos', '09', 'Residuos de la FFDU de productos químicos que contienen fósforo y procesos químicos del fósforo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 09 04', 'Residuos cálcicos de reacción distintos de los mencionados en el código 06 09 03', '06', 'Residuos de procesos químicos inorgánicos', '09', 'Residuos de la FFDU de productos químicos que contienen fósforo y procesos químicos del fósforo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 09 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '09', 'Residuos de la FFDU de productos químicos que contienen fósforo y procesos químicos del fósforo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 10 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '10', 'Residuos de la FFDU de productos químicos que contienen nitrógeno y procesos químicos del nitrógeno y de la fabricación de fertilizantes');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 11 01', 'Residuos cálcicos de reacción procedentes de la producción de dióxido de titanio', '06', 'Residuos de procesos químicos inorgánicos', '11', 'Residuos de la fabricación de pigmentos inorgánicos y opacificantes');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 11 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '11', 'Residuos de la fabricación de pigmentos inorgánicos y opacificantes');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 13 03', 'Negro de carbón', '06', 'Residuos de procesos químicos inorgánicos', '13', 'Residuos de procesos químicos inorgánicos no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('06 13 99', 'Residuos no especificados en otra categoría', '06', 'Residuos de procesos químicos inorgánicos', '13', 'Residuos de procesos químicos inorgánicos no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 01 12', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código 07 01 11', '07', 'Residuos de procesos químicos orgánicos', '01', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de productos químicos orgánicos de base');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 01 99', 'Residuos no especificados en otra categoría', '07', 'Residuos de procesos químicos orgánicos', '01', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de productos químicos orgánicos de base');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 02 12', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código 07 02 11', '07', 'Residuos de procesos químicos orgánicos', '02', 'Residuos de la FFDU de plásticos, caucho sintético y fibras artificiales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 02 13', 'Residuos de plástico', '07', 'Residuos de procesos químicos orgánicos', '02', 'Residuos de la FFDU de plásticos, caucho sintético y fibras artificiales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 02 15', 'Residuos procedentes de aditivos distintos de los especificados en el código 07 02 14', '07', 'Residuos de procesos químicos orgánicos', '02', 'Residuos de la FFDU de plásticos, caucho sintético y fibras artificiales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 02 17', 'Residuos que contengan siliconas distintas de las especificadas en el código 07 02 16', '07', 'Residuos de procesos químicos orgánicos', '02', 'Residuos de la FFDU de plásticos, caucho sintético y fibras artificiales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 02 99', 'Residuos no especificados en otra categoría', '07', 'Residuos de procesos químicos orgánicos', '02', 'Residuos de la FFDU de plásticos, caucho sintético y fibras artificiales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 03 12', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código 07 03 11', '07', 'Residuos de procesos químicos orgánicos', '03', 'Residuos de la FFDU de tintes y pigmentos orgánicos (excepto los del subcapítulo 06 11)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 03 99', 'Residuos no especificados en otra categoría', '07', 'Residuos de procesos químicos orgánicos', '03', 'Residuos de la FFDU de tintes y pigmentos orgánicos (excepto los del subcapítulo 06 11)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 04 12', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código 07 04 11', '07', 'Residuos de procesos químicos orgánicos', '04', 'Residuos de la FFDU de productos fitosanitarios orgánicos (excepto los de los códigos 02 01 08 y 02 01 09), de conservantes de la madera (excepto los del subcapítulo 03 02) y de otros biocidas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 04 99', 'Residuos no especificados en otra categoría', '07', 'Residuos de procesos químicos orgánicos', '04', 'Residuos de la FFDU de productos fitosanitarios orgánicos (excepto los de los códigos 02 01 08 y 02 01 09), de conservantes de la madera (excepto los del subcapítulo 03 02) y de otros biocidas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 05 12', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código 07 05 11', '07', 'Residuos de procesos químicos orgánicos', '05', 'Residuos de la FFDU de productos farmacéuticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 05 14', 'Residuos sólidos distintos de los especificados en el código 07 05 13', '07', 'Residuos de procesos químicos orgánicos', '05', 'Residuos de la FFDU de productos farmacéuticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 05 99', 'Residuos no especificados en otra categoría', '07', 'Residuos de procesos químicos orgánicos', '05', 'Residuos de la FFDU de productos farmacéuticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 06 12', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código 07 06 11', '07', 'Residuos de procesos químicos orgánicos', '06', 'Residuos de la FFDU de grasas, jabones, detergentes, desinfectantes y cosméticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 06 99', 'Residuos no especificados en otra categoría', '07', 'Residuos de procesos químicos orgánicos', '06', 'Residuos de la FFDU de grasas, jabones, detergentes, desinfectantes y cosméticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 07 12', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código 07 07 11', '07', 'Residuos de procesos químicos orgánicos', '07', 'Residuos de la FFDU de productos químicos resultantes de la química fina y productos químicos no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('07 07 99', 'Residuos no especificados en otra categoría', '07', 'Residuos de procesos químicos orgánicos', '07', 'Residuos de la FFDU de productos químicos resultantes de la química fina y productos químicos no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 01 12', 'Residuos de pintura y barniz, distintos de los especificados en el código 08 01 11', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '01', 'Residuos de la FFDU y del decapado o eliminación de pintura y barniz');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 01 14', 'Lodos de pintura y barniz, distintos de los especificados en el código 08 01 13', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '01', 'Residuos de la FFDU y del decapado o eliminación de pintura y barniz');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 01 16', 'Lodos acuosos que contienen pintura o barniz, distintos de los especificados en el código 08 01 15', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '01', 'Residuos de la FFDU y del decapado o eliminación de pintura y barniz');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 01 18', 'Residuos del decapado o eliminación de pintura y barniz, distintos de los especificados en el código 08 01 17', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '01', 'Residuos de la FFDU y del decapado o eliminación de pintura y barniz');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 01 20', 'Suspensiones acuosas que contienen pintura o barniz, distintos de los especificados en el código 08 01 19', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '01', 'Residuos de la FFDU y del decapado o eliminación de pintura y barniz');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 01 99', 'Residuos no especificados en otra categoría', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '01', 'Residuos de la FFDU y del decapado o eliminación de pintura y barniz');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 02 01', 'Residuos de arenillas de revestimiento', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '02', 'Residuos de la FFDU de otros revestimientos (incluidos materiales cerámicos)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 02 02', 'Lodos acuosos que contienen materiales cerámicos', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '02', 'Residuos de la FFDU de otros revestimientos (incluidos materiales cerámicos)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 02 03', 'Suspensiones acuosas que contienen materiales cerámicos', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '02', 'Residuos de la FFDU de otros revestimientos (incluidos materiales cerámicos)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 02 99', 'Residuos no especificados en otra categoría', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '02', 'Residuos de la FFDU de otros revestimientos (incluidos materiales cerámicos)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 03 07', 'Lodos acuosos que contienen tinta', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '03', 'Residuos de la FFDU de tintas de impresión');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 03 08', 'Residuos líquidos acuosos que contienen tinta', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '03', 'Residuos de la FFDU de tintas de impresión');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 03 13', 'Residuos de tintas distintos de los especificados en el código 08 03 12', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '03', 'Residuos de la FFDU de tintas de impresión');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 03 15', 'Lodos de tinta distintos de los especificados en el código 08 03 14', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '03', 'Residuos de la FFDU de tintas de impresión');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 03 18', 'Residuos de tóner de impresión, distintos de los especificados en el código 08 03 17', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '03', 'Residuos de la FFDU de tintas de impresión');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 03 99', 'Residuos no especificados en otra categoría', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '03', 'Residuos de la FFDU de tintas de impresión');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 04 10', 'Residuos de adhesivos y sellantes, distintos de los especificados en el código 08 04 09', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '04', 'Residuos de la FFDU de adhesivos y sellantes (incluyendo productos de impermeabilización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 04 12', 'Lodos de adhesivos y sellantes, distintos de los especificados en el código 08 04 11', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '04', 'Residuos de la FFDU de adhesivos y sellantes (incluyendo productos de impermeabilización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 04 14', 'Lodos acuosos que contienen adhesivos o sellantes, distintos de los especificados en el código 08 04 13', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '04', 'Residuos de la FFDU de adhesivos y sellantes (incluyendo productos de impermeabilización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 04 16', 'Residuos líquidos acuosos que contienen adhesivos o sellantes, distintos de los especificados en el código 08 04 15', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '04', 'Residuos de la FFDU de adhesivos y sellantes (incluyendo productos de impermeabilización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('08 04 99', 'Residuos no especificados en otra categoría', '08', 'Residuos de la fabricación, formulación, distribución y utilización (FFDU) de revestimientos (pinturas, barnices y esmaltes vítreos), adhesivos, sellantes y tintas de impresión', '04', 'Residuos de la FFDU de adhesivos y sellantes (incluyendo productos de impermeabilización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('09 01 07', 'Películas y papel fotográfico que contienen plata o compuestos de plata', '09', 'Residuos de la industria fotográfica', '01', 'Residuos de la industria fotográfica');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('09 01 08', 'Películas y papel fotográfico que no contienen plata ni compuestos de plata', '09', 'Residuos de la industria fotográfica', '01', 'Residuos de la industria fotográfica');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('09 01 10', 'Cámaras de un solo uso sin pilas ni acumuladores', '09', 'Residuos de la industria fotográfica', '01', 'Residuos de la industria fotográfica');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('09 01 12', 'Cámaras de un solo uso con pilas o acumuladores distintas de las especificadas en el código 09 01 11', '09', 'Residuos de la industria fotográfica', '01', 'Residuos de la industria fotográfica');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('09 01 99', 'Residuos no especificados en otra categoría', '09', 'Residuos de la industria fotográfica', '01', 'Residuos de la industria fotográfica');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 01', 'Cenizas del hogar, escorias y polvo de caldera (excepto el polvo de caldera especificado en el código 10 01 04)', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 02', 'Cenizas volantes de carbón', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 03', 'Cenizas volantes de turba y de madera (no tratada)', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 05', 'Residuos cálcicos de reacción, en forma sólida, procedentes de la desulfuración de gases de combustión', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 07', 'Residuos cálcicos de reacción, en forma de lodos, procedentes de la desulfuración de gases de combustión', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 15', 'Cenizas del hogar, escorias y polvo de caldera procedentes de la coincineración, distintos de los especificados en el código 10 01 14', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 17', 'Cenizas volantes procedentes de la co-incineración distintas de las especificadas en el código 10 01 16', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 19', 'Residuos procedentes de la depuración de gases distintos de los especificados en los códigos 10 01 05, 10 01 07 y 10 01 18', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 21', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código 10 01 20', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 23', 'Lodos acuosos procedentes de la limpieza de calderas, distintos de los especificados en el código 10 01 22', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 24', 'Arenas de lechos fluidizados', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 25', 'Residuos procedentes del almacenamiento y preparación de combustible de centrales termoeléctricas de carbón', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 26', 'Residuos del tratamiento del agua de refrigeración', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 01 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '01', 'Residuos de centrales eléctricas y otras plantas de combustión (excepto el capítulo 19)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 02 01', 'Residuos del tratamiento de escorias', '10', 'Residuos de procesos térmicos', '02', 'Residuos de la industria del hierro y del acero');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 02 02', 'Escorias no tratadas', '10', 'Residuos de procesos térmicos', '02', 'Residuos de la industria del hierro y del acero');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 02 08', 'Residuos sólidos del tratamiento de gases, distintos de los especificados en el código 10 02 07', '10', 'Residuos de procesos térmicos', '02', 'Residuos de la industria del hierro y del acero');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 02 10', 'Cascarilla de laminación', '10', 'Residuos de procesos térmicos', '02', 'Residuos de la industria del hierro y del acero');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 02 12', 'Residuos del tratamiento del agua de refrigeración, distintos de los especificados en el código 10 02 11', '10', 'Residuos de procesos térmicos', '02', 'Residuos de la industria del hierro y del acero');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 02 14', 'Lodos y tortas de filtración del tratamiento de gases, distintos de los especificados en el código 10 02 13', '10', 'Residuos de procesos térmicos', '02', 'Residuos de la industria del hierro y del acero');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 02 15', 'Otros lodos y tortas de filtración', '10', 'Residuos de procesos térmicos', '02', 'Residuos de la industria del hierro y del acero');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 02 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '02', 'Residuos de la industria del hierro y del acero');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 02', 'Fragmentos de ánodos', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 05', 'Residuos de alúmina', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 16', 'Espumas distintas de las especificadas en el código 10 03 15', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 18', 'Residuos que contienen carbono procedentes de la fabricación de ánodos, distintos de los especificados en el código 10 03 17', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 20', 'Partículas, procedentes de los efluentes gaseosos, distintas de las especificadas en el código 10 03 19', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 22', 'Otras partículas y polvo (incluido el polvo de molienda) distintos de los especificados en el código 10 03 21', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 24', 'Residuos sólidos del tratamiento de gases, distintos de los especificados en el código 10 03 23', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 26', 'Lodos y tortas de filtración del tratamiento de gases, distintos de los especificados en el código 10 03 25', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 28', 'Residuos del tratamiento del agua de refrigeración, distintos de los especificados en el código 10 03 27', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 30', 'Residuos del tratamiento de escorias salinas y granzas negras distintos de los especificados en el código 10 03 29', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 03 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '03', 'Residuos de la termometalurgia del aluminio');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 04 10', 'Residuos del tratamiento del agua de refrigeración distintos de los especificados en el código 10 04 09', '10', 'Residuos de procesos térmicos', '04', 'Residuos de la termometalurgia del plomo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 04 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '04', 'Residuos de la termometalurgia del plomo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 05 01', 'Escorias de la producción primaria y secundaria', '10', 'Residuos de procesos térmicos', '05', 'Residuos de la termometalurgia del zinc');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 05 04', 'Otras partículas y polvos', '10', 'Residuos de procesos térmicos', '05', 'Residuos de la termometalurgia del zinc');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 05 09', 'Residuos del tratamiento del agua de refrigeración distintos de los especificados en el código 10 05 08', '10', 'Residuos de procesos térmicos', '05', 'Residuos de la termometalurgia del zinc');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 05 11', 'Granzas y espumas distintas de las especificadas en el código 10 05 10', '10', 'Residuos de procesos térmicos', '05', 'Residuos de la termometalurgia del zinc');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 05 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '05', 'Residuos de la termometalurgia del zinc');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 06 01', 'Escorias de la producción primaria y secundaria', '10', 'Residuos de procesos térmicos', '06', 'Residuos de la termometalurgia del cobre');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 06 02', 'Granzas y espumas de la producción primaria y secundaria', '10', 'Residuos de procesos térmicos', '06', 'Residuos de la termometalurgia del cobre');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 06 04', 'Otras partículas y polvos', '10', 'Residuos de procesos térmicos', '06', 'Residuos de la termometalurgia del cobre');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 06 10', 'Residuos del tratamiento del agua de refrigeración, distintos de los especificados en el código 10 06 09', '10', 'Residuos de procesos térmicos', '06', 'Residuos de la termometalurgia del cobre');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 06 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '06', 'Residuos de la termometalurgia del cobre');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 07 01', 'Escorias de la producción primaria y secundaria', '10', 'Residuos de procesos térmicos', '07', 'Residuos de la termometalurgia de la plata, oro y platino');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 07 02', 'Granzas y espumas de la producción primaria y secundaria', '10', 'Residuos de procesos térmicos', '07', 'Residuos de la termometalurgia de la plata, oro y platino');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 07 03', 'Residuos sólidos del tratamiento de gases', '10', 'Residuos de procesos térmicos', '07', 'Residuos de la termometalurgia de la plata, oro y platino');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 07 04', 'Otras partículas y polvos', '10', 'Residuos de procesos térmicos', '07', 'Residuos de la termometalurgia de la plata, oro y platino');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 07 05', 'Lodos y tortas de filtración del tratamiento de gases', '10', 'Residuos de procesos térmicos', '07', 'Residuos de la termometalurgia de la plata, oro y platino');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 07 08', 'Residuos del tratamiento del agua de refrigeración distintos de los especificados en el código 10 07 07', '10', 'Residuos de procesos térmicos', '07', 'Residuos de la termometalurgia de la plata, oro y platino');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 07 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '07', 'Residuos de la termometalurgia de la plata, oro y platino');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 08 04', 'Partículas y polvo', '10', 'Residuos de procesos térmicos', '08', 'Residuos de la termometalurgia de otros metales no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 08 09', 'Otras escorias', '10', 'Residuos de procesos térmicos', '08', 'Residuos de la termometalurgia de otros metales no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 08 11', 'Granzas y espumas distintas de las especificadas en el código 10 08 10', '10', 'Residuos de procesos térmicos', '08', 'Residuos de la termometalurgia de otros metales no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 08 13', 'Residuos que contienen carbono procedentes de la fabricación de ánodos distintos de los especificados en el código 10 08 12', '10', 'Residuos de procesos térmicos', '08', 'Residuos de la termometalurgia de otros metales no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 08 14', 'Fragmentos de ánodos', '10', 'Residuos de procesos térmicos', '08', 'Residuos de la termometalurgia de otros metales no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 08 16', 'Partículas procedentes de los efluentes gaseosos distintas de las especificadas en el código 10 08 15', '10', 'Residuos de procesos térmicos', '08', 'Residuos de la termometalurgia de otros metales no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 08 18', 'Lodos y tortas de filtración del tratamiento de gases, distintos de los especificados en el código 10 08 17', '10', 'Residuos de procesos térmicos', '08', 'Residuos de la termometalurgia de otros metales no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 08 20', 'Residuos del tratamiento del agua de refrigeración distintos de los especificados en el código 10 08 19', '10', 'Residuos de procesos térmicos', '08', 'Residuos de la termometalurgia de otros metales no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 08 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '08', 'Residuos de la termometalurgia de otros metales no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 09 03', 'Escorias de horno', '10', 'Residuos de procesos térmicos', '09', 'Residuos de la fundición de piezas férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 09 06', 'Machos y moldes de fundición sin colada distintos de los especificados en el código 10 09 05', '10', 'Residuos de procesos térmicos', '09', 'Residuos de la fundición de piezas férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 09 08', 'Machos y moldes de fundición con colada distintos de los especificados en el código 10 09 07', '10', 'Residuos de procesos térmicos', '09', 'Residuos de la fundición de piezas férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 09 10', 'Partículas procedentes de los efluentes gaseosos distintas de las especificadas en el código 10 09 09', '10', 'Residuos de procesos térmicos', '09', 'Residuos de la fundición de piezas férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 09 12', 'Otras partículas distintas de las especificadas en el código 10 09 11', '10', 'Residuos de procesos térmicos', '09', 'Residuos de la fundición de piezas férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 09 14', 'Ligantes residuales distintos de los especificados en el código 10 09 13', '10', 'Residuos de procesos térmicos', '09', 'Residuos de la fundición de piezas férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 09 16', 'Residuos de agentes indicadores de fisuración distintos de los especificados en el código 10 09 15', '10', 'Residuos de procesos térmicos', '09', 'Residuos de la fundición de piezas férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 09 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '09', 'Residuos de la fundición de piezas férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 10 03', 'Escorias de horno', '10', 'Residuos de procesos térmicos', '10', 'Residuos de la fundición de piezas no férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 10 06', 'Machos y moldes de fundición sin colada distintos de los especificados en el código 10 10 05', '10', 'Residuos de procesos térmicos', '10', 'Residuos de la fundición de piezas no férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 10 08', 'Machos y moldes de fundición con colada distintos de los especificados en el código 10 10 07', '10', 'Residuos de procesos térmicos', '10', 'Residuos de la fundición de piezas no férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 10 10', 'Partículas procedentes de los efluentes gaseosos, distintas de las especificadas en el código 10 10 09', '10', 'Residuos de procesos térmicos', '10', 'Residuos de la fundición de piezas no férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 10 12', 'Otras partículas distintas de las especificadas en el código 10 10 11', '10', 'Residuos de procesos térmicos', '10', 'Residuos de la fundición de piezas no férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 10 14', 'Ligantes residuales distintos de los especificados en el código 10 10 13', '10', 'Residuos de procesos térmicos', '10', 'Residuos de la fundición de piezas no férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 10 16', 'Residuos de agentes indicadores de fisuración distintos de los especificados en el código 10 10 15', '10', 'Residuos de procesos térmicos', '10', 'Residuos de la fundición de piezas no férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 10 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '10', 'Residuos de la fundición de piezas no férreas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 11 03', 'Residuos de materiales de fibra de vidrio', '10', 'Residuos de procesos térmicos', '11', 'Residuos de la fabricación del vidrio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 11 05', 'Partículas y polvo', '10', 'Residuos de procesos térmicos', '11', 'Residuos de la fabricación del vidrio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 11 10', 'Residuos de la preparación de mezclas antes del proceso de cocción distintos de los especificados en el código 10 11 09', '10', 'Residuos de procesos térmicos', '11', 'Residuos de la fabricación del vidrio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 11 12', 'Residuos de vidrio distintos de los especificados en el código 10 11 11', '10', 'Residuos de procesos térmicos', '11', 'Residuos de la fabricación del vidrio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 11 14', 'Lodos procedentes del pulido y esmerilado del vidrio, distintos de los especificados en el código 10 11 13', '10', 'Residuos de procesos térmicos', '11', 'Residuos de la fabricación del vidrio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 11 16', 'Residuos sólidos del tratamiento de gases de combustión, distintos de los especificados en el código 10 11 15', '10', 'Residuos de procesos térmicos', '11', 'Residuos de la fabricación del vidrio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 11 18', 'Lodos y tortas de filtración del tratamiento de gases, distintos de los especificados en el código 10 11 17', '10', 'Residuos de procesos térmicos', '11', 'Residuos de la fabricación del vidrio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 11 20', 'Residuos sólidos del tratamiento in situ de efluentes, distintos de los especificados en el código 10 11 19', '10', 'Residuos de procesos térmicos', '11', 'Residuos de la fabricación del vidrio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 11 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '11', 'Residuos de la fabricación del vidrio y sus derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 12 01', 'Residuos de la preparación de mezclas antes del proceso de cocción', '10', 'Residuos de procesos térmicos', '12', 'Residuos de la fabricación de productos cerámicos, ladrillos, tejas y materiales de construcción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 12 03', 'Partículas y polvo', '10', 'Residuos de procesos térmicos', '12', 'Residuos de la fabricación de productos cerámicos, ladrillos, tejas y materiales de construcción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 12 05', 'Lodos y tortas de filtración del tratamiento de gases', '10', 'Residuos de procesos térmicos', '12', 'Residuos de la fabricación de productos cerámicos, ladrillos, tejas y materiales de construcción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 12 06', 'Moldes desechados', '10', 'Residuos de procesos térmicos', '12', 'Residuos de la fabricación de productos cerámicos, ladrillos, tejas y materiales de construcción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 12 08', 'Residuos de cerámica, ladrillos, tejas y materiales de construcción (después del proceso de cocción)', '10', 'Residuos de procesos térmicos', '12', 'Residuos de la fabricación de productos cerámicos, ladrillos, tejas y materiales de construcción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 12 10', 'Residuos sólidos del tratamiento de gases, distintos de los especificados en el código 10 12 09', '10', 'Residuos de procesos térmicos', '12', 'Residuos de la fabricación de productos cerámicos, ladrillos, tejas y materiales de construcción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 12 12', 'Residuos de vidriado distintos de los especificados en el código 10 12 11', '10', 'Residuos de procesos térmicos', '12', 'Residuos de la fabricación de productos cerámicos, ladrillos, tejas y materiales de construcción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 12 13', 'Lodos del tratamiento in situ de efluentes', '10', 'Residuos de procesos térmicos', '12', 'Residuos de la fabricación de productos cerámicos, ladrillos, tejas y materiales de construcción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 12 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '12', 'Residuos de la fabricación de productos cerámicos, ladrillos, tejas y materiales de construcción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 13 01', 'Residuos de la preparación de mezclas antes del proceso de cocción', '10', 'Residuos de procesos térmicos', '13', 'Residuos de la fabricación de cemento, cal y yeso y de productos derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 13 04', 'Residuos de calcinación e hidratación de la cal', '10', 'Residuos de procesos térmicos', '13', 'Residuos de la fabricación de cemento, cal y yeso y de productos derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 13 06', 'Partículas y polvo (excepto los códigos 10 13 12 y 10 13 13)', '10', 'Residuos de procesos térmicos', '13', 'Residuos de la fabricación de cemento, cal y yeso y de productos derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 13 07', 'Lodos y tortas de filtración del tratamiento de gases', '10', 'Residuos de procesos térmicos', '13', 'Residuos de la fabricación de cemento, cal y yeso y de productos derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 13 10', 'Residuos de la fabricación de fibrocemento distintos de los especificados en el código 10 13 09', '10', 'Residuos de procesos térmicos', '13', 'Residuos de la fabricación de cemento, cal y yeso y de productos derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 13 11', 'Residuos de materiales compuestos a base de cemento distintos de los especificados en los códigos 10 13 09 y 10 13 10', '10', 'Residuos de procesos térmicos', '13', 'Residuos de la fabricación de cemento, cal y yeso y de productos derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 13 13', 'Residuos sólidos del tratamiento de gases, distintos de los especificados en el código 10 13 12', '10', 'Residuos de procesos térmicos', '13', 'Residuos de la fabricación de cemento, cal y yeso y de productos derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 13 14', 'Residuos de hormigón y lodos de hormigón', '10', 'Residuos de procesos térmicos', '13', 'Residuos de la fabricación de cemento, cal y yeso y de productos derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('10 13 99', 'Residuos no especificados en otra categoría', '10', 'Residuos de procesos térmicos', '13', 'Residuos de la fabricación de cemento, cal y yeso y de productos derivados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 01 10', 'Lodos y tortas de filtración distintos de los especificados en el código 11 01 09', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '01', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales (por ejemplo, procesos de galvanización, procesos de recubrimiento con zinc, procesos de decapado, grabado, fosfatación, desengrasado alcalino y anodización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 01 12', 'Líquidos acuosos de enjuague distintos de los especificados en el código 11 01 11', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '01', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales (por ejemplo, procesos de galvanización, procesos de recubrimiento con zinc, procesos de decapado, grabado, fosfatación, desengrasado alcalino y anodización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 01 14', 'Residuos de desengrasado distintos de los especificados en el código 11 01 13', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '01', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales (por ejemplo, procesos de galvanización, procesos de recubrimiento con zinc, procesos de decapado, grabado, fosfatación, desengrasado alcalino y anodización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 01 99', 'Residuos no especificados en otra categoría', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '01', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales (por ejemplo, procesos de galvanización, procesos de recubrimiento con zinc, procesos de decapado, grabado, fosfatación, desengrasado alcalino y anodización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 02 03', 'Residuos de la producción de ánodos para procesos de electrólisis acuosa', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '02', 'Residuos de procesos hidrometalúrgicos no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 02 06', 'Residuos de procesos de la hidrometalurgia del cobre distintos de los especificados en el código 11 02 05', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '02', 'Residuos de procesos hidrometalúrgicos no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 02 99', 'Residuos no especificados en otra categoría', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '02', 'Residuos de procesos hidrometalúrgicos no férreos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 05 01', 'Matas de galvanización', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '05', 'Residuos de procesos de galvanización en caliente');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 05 02', 'Cenizas de zinc', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '05', 'Residuos de procesos de galvanización en caliente');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('11 05 99', 'Residuos no especificados en otra categoría', '11', 'Residuos del tratamiento químico de superficie y del recubrimiento de metales y otros materiales; residuos de la hidrometalurgia no férrea', '05', 'Residuos de procesos de galvanización en caliente');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 01', 'Limaduras y virutas de metales férreos', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 02', 'Polvo y partículas de metales férreos', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 03', 'Limaduras y virutas de metales no férreos', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 04', 'Polvo y partículas de metales no férreos', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 05', 'Virutas y rebabas de plástico', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 13', 'Residuos de soldadura', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 15', 'Lodos de mecanizado distintos de los especificados en el código 12 01 14', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 17', 'Residuos de granallado o chorreado distintos de los especificados en el código 12 01 16', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 21', 'Muelas y materiales de esmerilado usados distintos de los especificados en el código 12 01 20', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('12 01 99', 'Residuos no especificados en otra categoría', '12', 'Residuos del moldeado y del tratamiento físico y mecánico de superficie de metales y plásticos', '01', 'Residuos del moldeado y tratamiento físico y mecánico de superficie de metales y plásticos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('15 01 01', 'Envases de papel y cartón', '15', 'Residuos de envases; absorbentes, trapos de limpieza, materiales de filtración y ropas de protección no especificados en otra categoría', '01', 'Envases (incluidos los residuos de envases de la recogida selectiva municipal)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('15 01 02', 'Envases de plástico', '15', 'Residuos de envases; absorbentes, trapos de limpieza, materiales de filtración y ropas de protección no especificados en otra categoría', '01', 'Envases (incluidos los residuos de envases de la recogida selectiva municipal)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('15 01 03', 'Envases de madera', '15', 'Residuos de envases; absorbentes, trapos de limpieza, materiales de filtración y ropas de protección no especificados en otra categoría', '01', 'Envases (incluidos los residuos de envases de la recogida selectiva municipal)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('15 01 04', 'Envases metálicos', '15', 'Residuos de envases; absorbentes, trapos de limpieza, materiales de filtración y ropas de protección no especificados en otra categoría', '01', 'Envases (incluidos los residuos de envases de la recogida selectiva municipal)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('15 01 05', 'Envases compuestos', '15', 'Residuos de envases; absorbentes, trapos de limpieza, materiales de filtración y ropas de protección no especificados en otra categoría', '01', 'Envases (incluidos los residuos de envases de la recogida selectiva municipal)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('15 01 06', 'Envases mezclados', '15', 'Residuos de envases; absorbentes, trapos de limpieza, materiales de filtración y ropas de protección no especificados en otra categoría', '01', 'Envases (incluidos los residuos de envases de la recogida selectiva municipal)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('15 01 07', 'Envases de vidrio', '15', 'Residuos de envases; absorbentes, trapos de limpieza, materiales de filtración y ropas de protección no especificados en otra categoría', '01', 'Envases (incluidos los residuos de envases de la recogida selectiva municipal)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('15 01 09', 'Envases textiles', '15', 'Residuos de envases; absorbentes, trapos de limpieza, materiales de filtración y ropas de protección no especificados en otra categoría', '01', 'Envases (incluidos los residuos de envases de la recogida selectiva municipal)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('15 02 03', 'Absorbentes, materiales de filtración, trapos de limpieza y ropas protectoras distintos de los especificados en el código 15 02 02', '15', 'Residuos de envases; absorbentes, trapos de limpieza, materiales de filtración y ropas de protección no especificados en otra categoría', '02', 'Absorbentes, materiales de filtración, trapos de limpieza y ropas protectoras');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 03', 'Neumáticos fuera de uso', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 06', 'Vehículos al final de su vida útil que no contengan líquidos ni otros componentes peligrosos', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 12', 'Zapatas de freno distintas de las especificadas en el código 16 01 11', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 15', 'Anticongelantes distintos de los especificados en el código 16 01 14', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 16', 'Depósitos para gases licuados', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 17', 'Metales ferrosos', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 18', 'Metales no ferrosos', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 19', 'Plástico', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 20', 'Vidrio', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 22', 'Componentes no especificados en otra categoría', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 01 99', 'Residuos no especificados de otra forma', '16', 'Residuos no especificados en otro capítulo de la lista', '01', 'Vehículos de diferentes medios de transporte (incluidas las máquinas no de carretera) al final de su vida útil y residuos del desguace de vehículos al final de su vida útil y del mantenimiento de vehículos (excepto los de los capítulos 13, 14 y los subcapítulos 16 06 y 16 08)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 02 14', 'Equipos desechados distintos de los especificados en los códigos 16 02 09 a 16 02 13', '16', 'Residuos no especificados en otro capítulo de la lista', '02', 'Residuos de equipos eléctricos y electrónicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 02 16', 'Componentes retirados de equipos desechados distintos de los especificados en el código 16 02 15', '16', 'Residuos no especificados en otro capítulo de la lista', '02', 'Residuos de equipos eléctricos y electrónicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 03 04', 'Residuos inorgánicos distintos de los especificados en el código 16 03 03', '16', 'Residuos no especificados en otro capítulo de la lista', '03', 'Lotes de productos fuera de especificación y productos no utilizados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 03 06', 'Residuos orgánicos distintos de los especificados en el código 16 03 05', '16', 'Residuos no especificados en otro capítulo de la lista', '03', 'Lotes de productos fuera de especificación y productos no utilizados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 05 05', 'Gases en recipientes a presión, distintos de los especificados en el código 16 05 04', '16', 'Residuos no especificados en otro capítulo de la lista', '05', 'Gases en recipientes a presión y productos químicos desechados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 05 09', 'Productos químicos desechados distintos de los especificados en los códigos 16 05 06, 16 05 07 o 16 05 08', '16', 'Residuos no especificados en otro capítulo de la lista', '05', 'Gases en recipientes a presión y productos químicos desechados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 06 04', 'Pilas alcalinas (excepto 16 06 03)', '16', 'Residuos no especificados en otro capítulo de la lista', '06', 'Pilas y acumuladores');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 06 05', 'Otras pilas y acumuladores', '16', 'Residuos no especificados en otro capítulo de la lista', '06', 'Pilas y acumuladores');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 07 99', 'Residuos no especificados en otra categoría', '16', 'Residuos no especificados en otro capítulo de la lista', '07', 'Residuos de la limpieza de cisternas de transporte y almacenamiento y de la limpieza de cubas (excepto los de los capítulos 05 y 13)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 08 01', 'Catalizadores usados que contienen oro, plata, renio, rodio, paladio, iridio o platino (excepto el código 16 08 07)', '16', 'Residuos no especificados en otro capítulo de la lista', '08', 'Catalizadores usados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 08 03', 'Catalizadores usados que contienen metales de transición o compuestos de metales de transición no especificados de otra forma', '16', 'Residuos no especificados en otro capítulo de la lista', '08', 'Catalizadores usados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 08 04', 'Catalizadores usados procedentes del craqueo catalítico en lecho fluido (excepto los del código 16 08 07)', '16', 'Residuos no especificados en otro capítulo de la lista', '08', 'Catalizadores usados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 10 02', 'Residuos líquidos acuosos distintos de los especificados en el código 16 10 01', '16', 'Residuos no especificados en otro capítulo de la lista', '10', 'Residuos líquidos acuosos destinados a plantas de tratamiento externas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 10 04', 'Concentrados acuosos distintos de los especificados en el código 16 10 03', '16', 'Residuos no especificados en otro capítulo de la lista', '10', 'Residuos líquidos acuosos destinados a plantas de tratamiento externas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 11 02', 'Revestimientos y refractarios a base de carbono, procedentes de procesos metalúrgicos distintos de los especificados en el código 16 11 01', '16', 'Residuos no especificados en otro capítulo de la lista', '11', 'Residuos de revestimientos de hornos y refractarios');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 11 04', 'Otros revestimientos y refractarios procedentes de procesos metalúrgicos, distintos de los especificados en el código 16 11 03', '16', 'Residuos no especificados en otro capítulo de la lista', '11', 'Residuos de revestimientos de hornos y refractarios');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 11 06', 'Revestimientos y refractarios procedentes de procesos no metalúrgicos, distintos de los especificados en el código 16 11 05', '16', 'Residuos no especificados en otro capítulo de la lista', '11', 'Residuos de revestimientos de hornos y refractarios');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 12 01', 'Mezcla de residuos asimilables a domiciliarios', '16', 'Residuos no especificados en otro capítulo de la lista', '12', 'Residuos de limpieza de playas, borde costero y sumideros');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 12 02', 'Mezcla de residuos provenientes de actividades de la acuicultura', '16', 'Residuos no especificados en otro capítulo de la lista', '12', 'Residuos de limpieza de playas, borde costero y sumideros');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('16 12 03', 'Mezcla de residuos provenientes de actividades de pesca', '16', 'Residuos no especificados en otro capítulo de la lista', '12', 'Residuos de limpieza de playas, borde costero y sumideros');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 01 01', 'Hormigón', '17', 'Residuos de la construcción y demolición', '01', 'Hormigón, ladrillos, tejas y materiales cerámicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 01 02', 'Ladrillos', '17', 'Residuos de la construcción y demolición', '01', 'Hormigón, ladrillos, tejas y materiales cerámicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 01 03', 'Tejas y materiales cerámicos', '17', 'Residuos de la construcción y demolición', '01', 'Hormigón, ladrillos, tejas y materiales cerámicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 01 07', 'Mezclas de hormigón, ladrillos, tejas y materiales cerámicos, distintas de las especificadas en el código 17 01 06', '17', 'Residuos de la construcción y demolición', '01', 'Hormigón, ladrillos, tejas y materiales cerámicos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 02 01', 'Madera libre de impregnación o pinturas', '17', 'Residuos de la construcción y demolición', '02', 'Madera, vidrio y plástico');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 02 02', 'Vidrio', '17', 'Residuos de la construcción y demolición', '02', 'Madera, vidrio y plástico');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 02 03', 'Otros Plástico no especificados en los códigos 17 02 07, 17 02 08, 17 02 09 y 17 02 10', '17', 'Residuos de la construcción y demolición', '02', 'Madera, vidrio y plástico');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 02 05', 'Vidrios espejos o multicapas', '17', 'Residuos de la construcción y demolición', '02', 'Madera, vidrio y plástico');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 02 06', 'Madera impregnada o pintada (no contiene sustancias peligrosas)', '17', 'Residuos de la construcción y demolición', '02', 'Madera, vidrio y plástico');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 02 07', 'Plástico PVC (policloruro de vinilo)', '17', 'Residuos de la construcción y demolición', '02', 'Madera, vidrio y plástico');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 02 08', 'Plástico CPVC (policloruro de vinilo clorado)', '17', 'Residuos de la construcción y demolición', '02', 'Madera, vidrio y plástico');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 02 09', 'Plástico PPR (polipropileno R)', '17', 'Residuos de la construcción y demolición', '02', 'Madera, vidrio y plástico');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 02 10', 'Plástico HDPE (polietileno de alta densidad)', '17', 'Residuos de la construcción y demolición', '02', 'Madera, vidrio y plástico');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 03 02', 'Mezclas bituminosas distintas de las especificadas en el código 17 03 01', '17', 'Residuos de la construcción y demolición', '03', 'Mezclas bituminosas, alquitrán de hulla y otros productos alquitranados');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 04 01', 'Cobre, bronce, latón', '17', 'Residuos de la construcción y demolición', '04', 'Metales (incluidas sus aleaciones)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 04 02', 'Aluminio', '17', 'Residuos de la construcción y demolición', '04', 'Metales (incluidas sus aleaciones)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 04 03', 'Plomo', '17', 'Residuos de la construcción y demolición', '04', 'Metales (incluidas sus aleaciones)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 04 04', 'Zinc', '17', 'Residuos de la construcción y demolición', '04', 'Metales (incluidas sus aleaciones)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 04 05', 'Hierro y acero no galvanizados', '17', 'Residuos de la construcción y demolición', '04', 'Metales (incluidas sus aleaciones)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 04 06', 'Estaño', '17', 'Residuos de la construcción y demolición', '04', 'Metales (incluidas sus aleaciones)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 04 07', 'Metales mezclados', '17', 'Residuos de la construcción y demolición', '04', 'Metales (incluidas sus aleaciones)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 04 11', 'Cables distintos de los especificados en el código 17 04 10', '17', 'Residuos de la construcción y demolición', '04', 'Metales (incluidas sus aleaciones)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 04 12', 'Hierro y acero galvanizados', '17', 'Residuos de la construcción y demolición', '04', 'Metales (incluidas sus aleaciones)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 05 04', 'Tierra y piedras distintas de las especificadas en el código 17 05 03', '17', 'Residuos de la construcción y demolición', '05', 'Tierra (excluida la excavada de zonas contaminadas), piedras y lodos de drenaje');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 05 06', 'Lodos de drenaje distintos de los especificados en el código 17 05 05', '17', 'Residuos de la construcción y demolición', '05', 'Tierra (excluida la excavada de zonas contaminadas), piedras y lodos de drenaje');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 05 08', 'Balasto de vías férreas distinto del especificado en el código 17 05 07', '17', 'Residuos de la construcción y demolición', '05', 'Tierra (excluida la excavada de zonas contaminadas), piedras y lodos de drenaje');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 06 04', 'Materiales de aislamiento distintos de los especificados en los códigos 17 06 01 y 17 06 03', '17', 'Residuos de la construcción y demolición', '06', 'Materiales de aislamiento y materiales de construcción que no contienen amianto (asbesto)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 08 02', 'Materiales de construcción a base de yeso distintos de los especificados en el código 17 08 01', '17', 'Residuos de la construcción y demolición', '08', 'Materiales de construcción a base de yeso');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('17 09 04', 'Residuos mezclados de construcción y demolición distintos de los especificados en los códigos 17 09 01, 17 09 02 y 17 09 03', '17', 'Residuos de la construcción y demolición', '09', 'Otros residuos de construcción y demolición');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('18 01 01', 'Objetos cortantes y punzantes (excepto el código 18 01 03)', '18', 'Residuos de servicios médicos o veterinarios o de investigación asociada (salvo los residuos de cocina y de restaurante no procedentes directamente de la prestación de cuidados sanitarios)', '01', 'Residuos de maternidades, del diagnóstico, tratamiento o prevención de enfermedades humanas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('18 01 02', 'Restos anatómicos y órganos, incluidos bolsas y bancos de sangre (excepto el código 18 01 03)', '18', 'Residuos de servicios médicos o veterinarios o de investigación asociada (salvo los residuos de cocina y de restaurante no procedentes directamente de la prestación de cuidados sanitarios)', '01', 'Residuos de maternidades, del diagnóstico, tratamiento o prevención de enfermedades humanas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('18 01 04', 'Residuos cuya recogida y eliminación no es objeto de requisitos especiales para prevenir infecciones (por ejemplo, vendajes, vaciados de yeso, ropa blanca, ropa desechable, pañales)', '18', 'Residuos de servicios médicos o veterinarios o de investigación asociada (salvo los residuos de cocina y de restaurante no procedentes directamente de la prestación de cuidados sanitarios)', '01', 'Residuos de maternidades, del diagnóstico, tratamiento o prevención de enfermedades humanas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('18 01 07', 'Productos químicos distintos de los especificados en el código 18 01 06', '18', 'Residuos de servicios médicos o veterinarios o de investigación asociada (salvo los residuos de cocina y de restaurante no procedentes directamente de la prestación de cuidados sanitarios)', '01', 'Residuos de maternidades, del diagnóstico, tratamiento o prevención de enfermedades humanas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('18 01 09', 'Medicamentos distintos de los especificados en el código 18 01 08', '18', 'Residuos de servicios médicos o veterinarios o de investigación asociada (salvo los residuos de cocina y de restaurante no procedentes directamente de la prestación de cuidados sanitarios)', '01', 'Residuos de maternidades, del diagnóstico, tratamiento o prevención de enfermedades humanas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('18 02 01', 'Objetos cortantes y punzantes (excepto el código 18 02 02)', '18', 'Residuos de servicios médicos o veterinarios o de investigación asociada (salvo los residuos de cocina y de restaurante no procedentes directamente de la prestación de cuidados sanitarios)', '02', 'Residuos de la investigación, diagnóstico, tratamiento o prevención de enfermedades de animales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('18 02 03', 'Residuos cuya recogida y eliminación no es objeto de requisitos especiales para prevenir infecciones', '18', 'Residuos de servicios médicos o veterinarios o de investigación asociada (salvo los residuos de cocina y de restaurante no procedentes directamente de la prestación de cuidados sanitarios)', '02', 'Residuos de la investigación, diagnóstico, tratamiento o prevención de enfermedades de animales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('18 02 06', 'Productos químicos distintos de los especificados en el código 18 02 05', '18', 'Residuos de servicios médicos o veterinarios o de investigación asociada (salvo los residuos de cocina y de restaurante no procedentes directamente de la prestación de cuidados sanitarios)', '02', 'Residuos de la investigación, diagnóstico, tratamiento o prevención de enfermedades de animales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('18 02 08', 'Medicamentos distintos de los especificados en el código 18 02 07', '18', 'Residuos de servicios médicos o veterinarios o de investigación asociada (salvo los residuos de cocina y de restaurante no procedentes directamente de la prestación de cuidados sanitarios)', '02', 'Residuos de la investigación, diagnóstico, tratamiento o prevención de enfermedades de animales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 01 02', 'Materiales férreos separados de la ceniza de fondo de horno', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '01', 'Residuos de la incineración o pirólisis de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 01 12', 'Cenizas de fondo de horno y escorias distintas de las especificadas en el código 19 01 11', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '01', 'Residuos de la incineración o pirólisis de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 01 14', 'Cenizas volantes distintas de las especificadas en el código 19 01 13', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '01', 'Residuos de la incineración o pirólisis de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 01 16', 'Polvo de caldera distinto del especificado en el código 19 01 15', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '01', 'Residuos de la incineración o pirólisis de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 01 18', 'Residuos de pirólisis distintos de los especificados en el código 19 01 17', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '01', 'Residuos de la incineración o pirólisis de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 01 19', 'Arenas de lechos fluidizados', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '01', 'Residuos de la incineración o pirólisis de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 01 99', 'Residuos no especificados en otra categoría', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '01', 'Residuos de la incineración o pirólisis de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 02 03', 'Residuos mezclados previamente, compuestos exclusivamente por residuos no peligrosos', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '02', 'Residuos de tratamientos físicoquímicos de residuos (incluidas la descromatación, descianuración y neutralización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 02 06', 'Lodos de tratamientos físicoquímicos, distintos de los especificados en el código 19 02 05', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '02', 'Residuos de tratamientos físicoquímicos de residuos (incluidas la descromatación, descianuración y neutralización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 02 10', 'Residuos combustibles distintos de los especificados en los códigos 19 02 08 y 19 02 09', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '02', 'Residuos de tratamientos físicoquímicos de residuos (incluidas la descromatación, descianuración y neutralización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 02 99', 'Residuos no especificados en otra categoría', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '02', 'Residuos de tratamientos físicoquímicos de residuos (incluidas la descromatación, descianuración y neutralización)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 03 05', 'Residuos estabilizados distintos de los especificados en el código 19 03 04', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '03', 'Residuos estabilizados/solidificados [5]');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 03 07', 'Residuos solidificados distintos de los especificados en el código 19 03 06', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '03', 'Residuos estabilizados/solidificados [5]');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 04 01', 'Residuos vitrificados', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '04', 'Residuos vitrificados y residuos de la vitrificación');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 04 04', 'Residuos líquidos acuosos del templado de residuos vitrificados', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '04', 'Residuos vitrificados y residuos de la vitrificación');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 05 01', 'Fracción no compostada de residuos municipales y asimilados', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '05', 'Residuos del tratamiento aeróbico de residuos sólidos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 05 02', 'Fracción no compostada de residuos de procedencia animal o vegetal', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '05', 'Residuos del tratamiento aeróbico de residuos sólidos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 05 03', 'Compost fuera de especificación', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '05', 'Residuos del tratamiento aeróbico de residuos sólidos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 05 99', 'Residuos no especificados en otra categoría', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '05', 'Residuos del tratamiento aeróbico de residuos sólidos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 06 03', 'Licores del tratamiento anaeróbico de residuos municipales', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '06', 'Residuos del tratamiento anaeróbico de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 06 04', 'Lodos de digestión del tratamiento anaeróbico de residuos municipales', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '06', 'Residuos del tratamiento anaeróbico de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 06 05', 'Licores del tratamiento anaeróbico de residuos animales y vegetales', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '06', 'Residuos del tratamiento anaeróbico de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 06 06', 'Lodos de digestión del tratamiento anaeróbico de residuos animales y vegetales', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '06', 'Residuos del tratamiento anaeróbico de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 06 99', 'Residuos no especificados en otra categoría', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '06', 'Residuos del tratamiento anaeróbico de residuos');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 07 03', 'Lixiviados de vertedero distintos de los especificados en el código 19 07 02', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '07', 'Lixiviados de vertedero');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 08 01', 'Residuos de cribado', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '08', 'Residuos de plantas de tratamiento de aguas residuales no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 08 02', 'Residuos de desarenado', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '08', 'Residuos de plantas de tratamiento de aguas residuales no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 08 05', 'Lodos del tratamiento de aguas residuales urbanas', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '08', 'Residuos de plantas de tratamiento de aguas residuales no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 08 09', 'Mezclas de grasas y aceites procedentes de la separación de agua/sustancias aceitosas que contienen sólo aceites y grasa', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '08', 'Residuos de plantas de tratamiento de aguas residuales no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 08 12', 'Lodos procedentes del tratamiento biológico de aguas residuales industriales distintos de los especificados en el código 19 08 11', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '08', 'Residuos de plantas de tratamiento de aguas residuales no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 08 14', 'Lodos procedentes de otros tratamientos de aguas residuales industriales, distintos de los especificados en el código 19 08 13', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '08', 'Residuos de plantas de tratamiento de aguas residuales no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 08 99', 'Residuos no especificados en otra categoría', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '08', 'Residuos de plantas de tratamiento de aguas residuales no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 09 01', 'Residuos sólidos de la filtración primaria y cribado', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '09', 'Residuos de la preparación de agua para consumo humano o agua para uso industrial');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 09 02', 'Lodos de la clarificación del agua', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '09', 'Residuos de la preparación de agua para consumo humano o agua para uso industrial');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 09 03', 'Lodos de descarbonatación', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '09', 'Residuos de la preparación de agua para consumo humano o agua para uso industrial');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 09 04', 'Carbón activo usado', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '09', 'Residuos de la preparación de agua para consumo humano o agua para uso industrial');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 09 05', 'Resinas intercambiadoras de iones saturadas o usadas', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '09', 'Residuos de la preparación de agua para consumo humano o agua para uso industrial');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 09 06', 'Soluciones y lodos de la regeneración de intercambiadores de iones', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '09', 'Residuos de la preparación de agua para consumo humano o agua para uso industrial');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 09 99', 'Residuos no especificados en otra categoría', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '09', 'Residuos de la preparación de agua para consumo humano o agua para uso industrial');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 10 01', 'Residuos de hierro y acero', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '10', 'Residuos procedentes del fragmentado de residuos que contienen metales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 10 02', 'Residuos no férreos', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '10', 'Residuos procedentes del fragmentado de residuos que contienen metales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 10 04', 'Fracciones ligeras de fragmentación (fluff-light) y polvo distintas de las especificadas en el código 19 10 03', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '10', 'Residuos procedentes del fragmentado de residuos que contienen metales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 10 06', 'Otras fracciones distintas de las especificadas en el código 19 10 05', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '10', 'Residuos procedentes del fragmentado de residuos que contienen metales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 11 06', 'Lodos del tratamiento in situ de efluentes, distintos de los especificados en el código', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '11', 'Residuos de la regeneración de aceites');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 11 99', 'Residuos no especificados en otra categoría', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '11', 'Residuos de la regeneración de aceites');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 01', 'Papel y cartón', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 02', 'Metales férreos', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 03', 'Metales no férreos', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 04', 'Plástico y caucho', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 05', 'Vidrio', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 07', 'Madera distinta de la especificada en el código 19 12 06', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 08', 'Textiles', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 09', 'Minerales (por ejemplo, arena, piedras)', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 10', 'Residuos combustibles (combustible derivado de residuos)', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 12 12', 'Otros residuos (incluidas mezclas de materiales) procedentes del tratamiento mecánico de residuos, distintos de los especificados en el código 19 12 11', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '12', 'Residuos del tratamiento mecánico de residuos (por ejemplo, clasificación, trituración, compactación, peletización) no especificados en otra categoría');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 13 02', 'Residuos sólidos de la recuperación de suelos distintos de los especificados en el código 19 13 01', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '13', 'Residuos de la recuperación de suelos y de aguas subterráneas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 13 04', 'Lodos de la recuperación de suelos distintos de los especificados en el código 19 13 03', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '13', 'Residuos de la recuperación de suelos y de aguas subterráneas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 13 06', 'Lodos de la recuperación de aguas subterráneas distintos de los especificados en el código 19 13 05', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '13', 'Residuos de la recuperación de suelos y de aguas subterráneas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('19 13 08', 'Residuos de líquidos acuosos y concentrados acuosos procedentes de la recuperación de aguas subterráneas, distintos de los especificados en el código 19 13 07', '19', 'Residuos de las instalaciones para el tratamiento de residuos, de las plantas externas de tratamiento de aguas residuales y de la preparación de agua para consumo humano y de agua para uso industrial', '13', 'Residuos de la recuperación de suelos y de aguas subterráneas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 01', 'Papel y cartón', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 02', 'Vidrio', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 08', 'Residuos biodegradables de cocinas y restaurantes', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 10', 'Ropa', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 11', 'Tejidos', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 25', 'Aceites y grasas comestibles', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 28', 'Pinturas, tintas, adhesivos y resinas distintos de los especificados en el código 20 01 27', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 30', 'Detergentes distintos de los especificados en el código 20 01 29', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 32', 'Medicamentos distintos de los especificados en el código 20 01 31', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 34', 'Baterías y acumuladores distintos de los especificados en el código 20 01 33', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 36', 'Equipos eléctricos y electrónicos desechados distintos de los especificados en los códigos 20 01 21, 20 01 23 y 20 01 35', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 38', 'Madera distinta de la especificada en el código 20 01 37', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 39', 'Plásticos', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 40', 'Metales', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 41', 'Residuos del deshollinado de chimeneas', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 01 99', 'Otras fracciones no especificadas en otra categoría', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '01', 'Fracciones recogidas selectivamente (excepto las especificadas en el subcapítulo 15 01)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 02 01', 'Residuos biodegradables', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '02', 'Residuos de parques y jardines (incluidos los residuos de cementerios)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 02 02', 'Tierra y piedras', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '02', 'Residuos de parques y jardines (incluidos los residuos de cementerios)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 02 03', 'Otros residuos no biodegradables', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '02', 'Residuos de parques y jardines (incluidos los residuos de cementerios)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 03 01', 'Mezclas de residuos municipales', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '03', 'Otros residuos municipales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 03 02', 'Residuos de mercados', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '03', 'Otros residuos municipales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 03 03', 'Residuos de limpieza viaria', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '03', 'Otros residuos municipales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 03 04', 'Lodos de fosas sépticas', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '03', 'Otros residuos municipales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 03 06', 'Residuos de la limpieza de alcantarillas', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '03', 'Otros residuos municipales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 03 07', 'Residuos voluminosos (incluidos muebles)', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '03', 'Otros residuos municipales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('20 03 99', 'Residuos municipales no especificados en otra categoría', '20', 'Residuos municipales (residuos domésticos y residuos asimilables procedentes de los comercios, industrias e instituciones), incluidas las fracciones recogidas selectivamente', '03', 'Otros residuos municipales');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 01 01', 'Residuos orgánicos (ejemplo como vísceras, escamas, carne, espinas, entre otros)', '21', 'Acuicultura y Pesca', '01', 'Residuos de plantas de procesamiento de peces de acuicultura');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 01 02', 'Lodos de lavado y limpieza (incluye residuos líquidos orgánicos, sangre entre otros; e inorgánicos).', '21', 'Acuicultura y Pesca', '01', 'Residuos de plantas de procesamiento de peces de acuicultura');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 01 03', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como merma)', '21', 'Acuicultura y Pesca', '01', 'Residuos de plantas de procesamiento de peces de acuicultura');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 02 01', 'Residuos orgánicos (ejemplo como conchas, algas, carne, entre otros; incluye mortalidad)', '21', 'Acuicultura y Pesca', '02', 'Residuos de plantas de procesamiento de moluscos y otras especies de cultivo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 02 02', 'Lodos de lavado y limpieza (incluye residuos líquidos orgánicos e inorgánicos)', '21', 'Acuicultura y Pesca', '02', 'Residuos de plantas de procesamiento de moluscos y otras especies de cultivo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 02 03', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como merma)', '21', 'Acuicultura y Pesca', '02', 'Residuos de plantas de procesamiento de moluscos y otras especies de cultivo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 03 01', 'Residuos orgánicos (incluye vegetal, conchas, restos de especies marinas)', '21', 'Acuicultura y Pesca', '03', 'Residuos de plantas de procesamiento de algas de cultivo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 03 02', 'Residuos de hidrocoloides (carragenina, alginatos, agar)', '21', 'Acuicultura y Pesca', '03', 'Residuos de plantas de procesamiento de algas de cultivo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 03 03', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como merma)', '21', 'Acuicultura y Pesca', '03', 'Residuos de plantas de procesamiento de algas de cultivo');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 04 01', 'Residuos orgánicos (ej: fouling (incrustaciones biológicas), mortalidad, vísceras, eliminación productiva)', '21', 'Acuicultura y Pesca', '04', 'Residuos de cultivos de peces');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 04 02', 'Residuos de boyas y flotadores (incluye poliestireno expandido)', '21', 'Acuicultura y Pesca', '04', 'Residuos de cultivos de peces');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 04 03', 'Residuos de redes y cabos', '21', 'Acuicultura y Pesca', '04', 'Residuos de cultivos de peces');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 04 04', 'Residuos de plásticos (HDPE, PEE, PETE, PVC) excepto planzas, boyas, flotadores, redes y cabos.', '21', 'Acuicultura y Pesca', '04', 'Residuos de cultivos de peces');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 04 05', 'Residuos de planzas', '21', 'Acuicultura y Pesca', '04', 'Residuos de cultivos de peces');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 04 06', 'Residuos metálicos (incluye jaulas, pasillos y estructuras del centro de cultivo)', '21', 'Acuicultura y Pesca', '04', 'Residuos de cultivos de peces');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 04 07', 'Residuos orgánicos retenidos (heces, alimento no consumido, y/o lodos)', '21', 'Acuicultura y Pesca', '04', 'Residuos de cultivos de peces');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 04 08', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como pellets)', '21', 'Acuicultura y Pesca', '04', 'Residuos de cultivos de peces');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 05 01', 'Residuos orgánicos (ejemplo como conchas, algas, fouling)', '21', 'Acuicultura y Pesca', '05', 'Residuos de cultivos de moluscos y otras especies');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 05 02', 'Residuos de boyas y flotadores (incluye poliestireno expandido)', '21', 'Acuicultura y Pesca', '05', 'Residuos de cultivos de moluscos y otras especies');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 05 03', 'Residuos de redes y cabos (por ejemplo: cuelgas, colectores, línea madre, entre otros)', '21', 'Acuicultura y Pesca', '05', 'Residuos de cultivos de moluscos y otras especies');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 05 04', 'Residuos de plásticos (HDPE, PEE, PETE, PVC) excepto boyas, flotadores, redes y cabos', '21', 'Acuicultura y Pesca', '05', 'Residuos de cultivos de moluscos y otras especies');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 05 05', 'Residuos metálicos (incluye linternas, jaulas, pasillos y estructuras del centro de cultivo)', '21', 'Acuicultura y Pesca', '05', 'Residuos de cultivos de moluscos y otras especies');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 05 06', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como pellets)', '21', 'Acuicultura y Pesca', '05', 'Residuos de cultivos de moluscos y otras especies');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 06 01', 'Residuos orgánicos (ejemplo como conchas, algas, fouling)', '21', 'Acuicultura y Pesca', '06', 'Residuos de cultivos de algas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 06 02', 'Residuos de boyas y flotadores (incluye poliestireno expandido)', '21', 'Acuicultura y Pesca', '06', 'Residuos de cultivos de algas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 06 03', 'Residuos de redes y cabos (incluye líneas de cultivo)', '21', 'Acuicultura y Pesca', '06', 'Residuos de cultivos de algas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 06 04', 'Residuos de plásticos (HDPE, PEE, PETE, PVC) excepto boyas, flotadores, redes y cabos', '21', 'Acuicultura y Pesca', '06', 'Residuos de cultivos de algas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 06 05', 'Residuos metálicos (incluye quechas, estructuras entre otros)', '21', 'Acuicultura y Pesca', '06', 'Residuos de cultivos de algas');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 01', 'Residuos orgánicos (ejemplo como conchas, algas, carne, entre otros; incluye mortalidad)', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 02', 'Residuos de boyas y flotadores (incluye poliestireno expandido)', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 03', 'Residuos de redes y cabos', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 04', 'Residuos de plásticos (HDPE, PEE, PETE, PVC) excepto planzas, boyas, flotadores, redes y cabos', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 05', 'Residuos planzas', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 06', 'Residuos metálicos (incluye quechas, estructuras, entre otros)', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 07', 'Residuos de fibra de vidrio', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 08', 'Lodos de lavado, desinfección y limpieza', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 09', 'Lodos orgánicos (ejemplo fecas y alimento no consumido)', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 07 10', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como pellets)', '21', 'Acuicultura y Pesca', '07', 'Residuos de piscicultura y hatchery');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 08 01', 'Residuos orgánicos (ejemplo como conchas, algas, carne, entre otros)', '21', 'Acuicultura y Pesca', '08', 'Residuos de extracción de recursos hidrobiológicos (captura y recolección)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 08 02', 'Residuos de boyas y flotadores (incluye poliestireno expandido)', '21', 'Acuicultura y Pesca', '08', 'Residuos de extracción de recursos hidrobiológicos (captura y recolección)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 08 03', 'Residuos de redes y cabos', '21', 'Acuicultura y Pesca', '08', 'Residuos de extracción de recursos hidrobiológicos (captura y recolección)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 08 04', 'Residuos metálicos (incluye anzuelos, entre otros)', '21', 'Acuicultura y Pesca', '08', 'Residuos de extracción de recursos hidrobiológicos (captura y recolección)');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 09 01', 'Residuos orgánicos (ejemplo como vísceras, escamas, carne, espinas, entre otros.)', '21', 'Acuicultura y Pesca', '09', 'Residuos de plantas de procesamiento de peces de extracción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 09 02', 'Lodos de lavado y limpieza (incluye residuos líquidos orgánicos e inorgánicos)', '21', 'Acuicultura y Pesca', '09', 'Residuos de plantas de procesamiento de peces de extracción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 09 03', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como merma)', '21', 'Acuicultura y Pesca', '09', 'Residuos de plantas de procesamiento de peces de extracción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 10 01', 'Residuos orgánicos (incluye vegetal, conchas, restos de especies marinas)', '21', 'Acuicultura y Pesca', '10', 'Residuos de plantas de procesamiento de algas provenientes de la recolección');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 10 02', 'Lodos de lavado y limpieza (incluye residuos líquidos orgánicos e inorgánicos)', '21', 'Acuicultura y Pesca', '10', 'Residuos de plantas de procesamiento de algas provenientes de la recolección');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 10 03', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como merma)', '21', 'Acuicultura y Pesca', '10', 'Residuos de plantas de procesamiento de algas provenientes de la recolección');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 11 01', 'Residuos orgánicos (ejemplo como conchas, algas, carne, entre otros)', '21', 'Acuicultura y Pesca', '11', 'Residuos de plantas de procesamiento de moluscos y otras especies provenientes de la extracción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 11 02', 'Lodos de lavado y limpieza (incluye residuos líquidos orgánicos e inorgánicos)', '21', 'Acuicultura y Pesca', '11', 'Residuos de plantas de procesamiento de moluscos y otras especies provenientes de la extracción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 11 03', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como merma)', '21', 'Acuicultura y Pesca', '11', 'Residuos de plantas de procesamiento de moluscos y otras especies provenientes de la extracción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 12 01', 'Residuos orgánicos (ejemplo como conchas, cáscara calcárea, algas, carne, entre otros)', '21', 'Acuicultura y Pesca', '12', 'Residuos de plantas de procesamiento de crustáceos provenientes de la extracción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 12 02', 'Lodos de lavado y limpieza (incluye residuos líquidos orgánicos e inorgánico)', '21', 'Acuicultura y Pesca', '12', 'Residuos de plantas de procesamiento de crustáceos provenientes de la extracción');
+INSERT INTO public.ler_codes (id, description, chapter_code, chapter_description, subchapter_code, subchapter_description)
+VALUES ('21 12 03', 'Materiales inadecuados para el consumo o la elaboración (ejemplo como merma)', '21', 'Acuicultura y Pesca', '12', 'Residuos de plantas de procesamiento de crustáceos provenientes de la extracción');
+
+-- ==============================================================================
+-- SEED DATA: WASTE TREATMENTS (Operaciones de Eliminación y Valorización)
+-- ==============================================================================
+TRUNCATE TABLE public.waste_treatments CASCADE;
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('11', 'Relleno sanitario', 'Eliminación', 'Disposición final');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('12', 'Vertedero', 'Eliminación', 'Disposición final');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('14', 'Monorelleno', 'Eliminación', 'Disposición final');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('30', 'Basural', 'Eliminación', 'Disposición final');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('32', 'Recepción de Lodos en PTAS', 'Eliminación', 'Disposición final');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('33', 'Depósito de Seguridad', 'Eliminación', 'Disposición final');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('60', 'Sitio de Escombros de la Construcción', 'Eliminación', 'Disposición final');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('65', 'Área de disposición controlada', 'Eliminación', 'Disposición final');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('58', 'Depósito de Cenizas', 'Eliminación', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('49', 'Residuos Voluminosos', 'Eliminación', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('56', 'Residuos Municipales', 'Eliminación', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('4', 'Incineración sin recuperación de energía', 'Eliminación', 'Incineración sin recuperación de energía');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('36', 'Pretratamiento de papel, cartón y productos de papel', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('37', 'Pretratamiento vidrio', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('38', 'Pretratamiento de ropa', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('39', 'Pretratamiento de textil, cuero y piel', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('40', 'Pretratamiento de aceites y grasas comestibles', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('41', 'Pretratamiento de pinturas, tintas, adhesivos y resinas que no contienen sustancias peligrosas', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('42', 'Pretratamiento de detergentes que no contienen sustancias peligrosas', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('43', 'Pretratamiento de madera que no contiene sustancias peligrosas', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('44', 'Pretratamiento de Metales', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('45', 'Pretratamiento de plásticos', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('47', 'Pretratamiento de Neumáticos Fuera de Uso', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('50', 'Pretratamiento de Residuos Voluminosos', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('57', 'Aparatos eléctricos y electrónicos', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('61', 'Pretratamiento de caucho y goma', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('64', 'Materiales eléctricos', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('73', 'Residuos Agroalimentarios', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('74', 'Tintas secas y Fertilizantes', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('75', 'Pretratamiento de Equipos de Refrigeración', 'Valorización', 'Pretratamiento (Centro de acopio)');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('16', 'Reciclaje de papel, cartón y productos de papel', 'Valorización', 'Reciclaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('17', 'Reciclaje de textiles', 'Valorización', 'Reciclaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('18', 'Reciclaje de plásticos', 'Valorización', 'Reciclaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('19', 'Reciclaje de vidrio', 'Valorización', 'Reciclaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('20', 'Reciclaje de metales', 'Valorización', 'Reciclaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('22', 'Residuos voluminosos', 'Valorización', 'Reciclaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('46', 'Reciclaje de Neumáticos Fuera de Uso', 'Valorización', 'Reciclaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('66', 'Reciclaje de residuos de pastas y/o productos alimenticios para consumo animal', 'Valorización', 'Reciclaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('76', 'Reciclaje de Aparatos eléctricos y electrónicos', 'Valorización', 'Reciclaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('24', 'Co-incineración', 'Valorización', 'Recuperación de energía');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('25', 'Incineración con recuperación de energía', 'Valorización', 'Recuperación de energía');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('9', 'Recuperación de energía', 'Valorización', 'Recuperación de energía');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('63', 'Aplicación a suelo', 'Valorización', 'Recepción de Lodos de PTAS');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('62', 'Recepción de Lodos de PTAS', 'Valorización', 'Recepción de Lodos de PTAS');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('7', 'Preparación para reutilización', 'Valorización', 'Preparación para reutilización');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('23', 'Co-procesamiento', 'Valorización', 'Co-procesamiento');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('27', 'Compostaje', 'Valorización', 'Compostaje');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('28', 'Lombricultura', 'Valorización', 'Lombricultura');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('29', 'Degradación Anaeróbica', 'Valorización', 'Degradación Anaeróbica');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('31', 'Aplicación al Suelo', 'Valorización', 'Aplicación al Suelo');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('34', 'Reducción de Recursos Hidrobiológicos', 'Valorización', 'Reducción de Recursos Hidrobiológicos');
+INSERT INTO public.waste_treatments (code, name, category, subcategory)
+VALUES ('68', 'Reducción de residuos orgánicos en base a larvas de insectos', 'Valorización', 'Reducción de residuos orgánicos');
+
+-- ==============================================================================
+-- SEED DATA: SUBSCRIPTION PLANS
+-- ==============================================================================
+TRUNCATE TABLE public.subscription_plans CASCADE;
+INSERT INTO public.subscription_plans (code, name, description, price_clp, features, limits)
+VALUES ('free', 'Plan Semilla', 'Para pequeñas organizaciones que inician su gestión de residuos.', 0, '{"users": 1, "establishments": 1, "storage_gb": 1, "support": "community"}', '{"monthly_declarations": 10}');
+INSERT INTO public.subscription_plans (code, name, description, price_clp, features, limits)
+VALUES ('pro', 'Plan Brote', 'Para empresas en crecimiento que requieren reportes avanzados.', 50000, '{"users": 5, "establishments": 5, "storage_gb": 10, "support": "email"}', '{"monthly_declarations": 100}');
+INSERT INTO public.subscription_plans (code, name, description, price_clp, features, limits)
+VALUES ('enterprise', 'Plan Bosque', 'Solución integral para grandes generadores y municipios.', 150000, '{"users": "unlimited", "establishments": "unlimited", "storage_gb": 100, "support": "priority"}', '{"monthly_declarations": "unlimited"}');

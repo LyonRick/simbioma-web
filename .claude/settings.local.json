@@ -1,27 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_take_screenshot",
-      "mcp__playwright__browser_close",
-      "Bash(npm run dev:*)",
-      "Bash(timeout /t 10 /nobreak)",
-      "Bash(npm install:*)",
-      "mcp__playwright__browser_resize",
-      "mcp__playwright__browser_console_messages",
-      "mcp__playwright__browser_evaluate",
-      "Bash(ping:*)",
-      "mcp__playwright__browser_run_code",
-      "mcp__playwright__browser_snapshot",
-      "mcp__playwright__browser_click",
-      "mcp__playwright__browser_wait_for",
-      "Bash(npm run lint:*)",
-      "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Complete Phase 1 MVP - Modern Homepage, Legal Pages & Blog\n\nThis commit implements the complete Phase 1 of the Simbioma MVP, including:\n\n## Features Added\n- ✨ Modern, responsive homepage with animations (framer-motion)\n  - Hero section with asymmetric layout and mockup visualization\n  - Problem section highlighting data fragmentation challenges\n  - Segmentation section (Governments vs Businesses)\n  - Solution section with 3-step process (Connect, Consolidate, Report)\n  - Benefits grid with 6 key value propositions\n  - FAQ accordion with common questions\n  - CTA section with Beta access form\n- 📝 Legal pages (Privacy, Terms, Security) with comprehensive content\n- 📰 Blog infrastructure with initial article on environmental management\n- 🎨 Design system with brand colors (#2D9D78, #1E5F8C, #F5A623)\n- 🧩 Reusable component library (Header, Footer, Button, Card, Input, Logo)\n- 📱 Fully responsive design (mobile, tablet, desktop)\n\n## Technical Implementation\n- Next.js 16 with App Router\n- React 19 with Server Components\n- Tailwind CSS 4 with custom color palette\n- TypeScript with strict mode\n- Framer Motion for smooth animations\n- Lucide React for icons\n\n## Documentation\n- Complete PRD (Product Requirements Document)\n- Business model documentation (dual B2G + B2B market)\n- Database schema v4.0 with indicator subscription system\n- Brand guidelines and design system\n- Market research documents\n- Implementation plan and task tracking\n\n## Project Structure\n- app/ - Next.js App Router pages\n- components/ - Reusable components (layout, ui, sections)\n- lib/ - Utility functions (cn for className merging)\n- docs/ - Project documentation\n- design/ - Brand guidelines and wireframes\n- public/images/ - Static assets\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git push:*)",
-      "Bash(git reset:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nfix(accessibility): Resolve critical accessibility issues - Session 1\n\nThis commit addresses high-priority accessibility and ESLint errors identified\nin the code review report (docs/code-review-report-2025-11-26.md).\n\n## Changes Made (Session 1: Accessibility)\n\n### 1. ESLint Errors Fixed (26 unescaped quotes)\n- app/blog/simbioma-beneficios-gestion-ambiental/page.tsx: 3 fixes\n  - Escaped quotes in \"copiar y pegar\", \"dificultades severas\", \"otro software más\"\n- app/privacidad/page.tsx: 1 fix\n  - Escaped quotes in legal entity definitions\n- app/terminos/page.tsx: 4 fixes\n  - Escaped quotes in legal terminology and service descriptions\n\nAll JSX text content now uses &quot; entities for proper quote escaping.\n\n### 2. Alt Text Improvements (Accessibility WCAG 2.1 A)\n- components/sections/Solucion.tsx: 3 images updated\n  - Added descriptive altText field to all step images\n  - Changed from generic titles to specific visual descriptions\n- app/blog/page.tsx: 1 image updated\n  - Added descriptive altText for blog post hero image\n\n### 3. Form Labels Added (Accessibility WCAG 2.1 A)\n- components/sections/CTAFinal.tsx: 4 form fields enhanced\n  - Added sr-only labels for screen readers\n  - Added proper id attributes\n  - Added aria-label attributes\n  - Wrapped inputs in divs for semantic structure\n\nAll form inputs now have proper labels for screen reader users while\nmaintaining the original visual design.\n\n## Documentation\n- Added comprehensive code review report: docs/code-review-report-2025-11-26.md\n- Added prioritized error tracking: docs/errores-criticos-priorizados.md\n\n## Impact\n- Resolves 3 Critical accessibility issues\n- Fixes 26 ESLint errors\n- Improves WCAG 2.1 Level A compliance significantly\n- Enhances screen reader compatibility\n\n## Next Steps (Pending)\n- Session 2: UX and Navigation improvements\n- Session 3: SEO metadata and maintainability\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git commit:*)"
+      "Bash(claude --version:*)",
+      "Bash(npm view:*)",
+      "Bash(findstr:*)",
+      "Bash(dir:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

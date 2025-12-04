@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, PlayCircle, Leaf, BarChart3, PieChart, Activity } from "lucide-react";
 
 export default function Hero() {
@@ -47,7 +47,7 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <Link href="/#cta-final">
-                <Button variant="premium" size="lg" className="h-14 px-8 text-lg shadow-verde-bosque/25">
+                <Button variant="default" size="lg" className="h-14 px-8 text-lg shadow-verde-bosque/25">
                   Solicitar Acceso Beta
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
