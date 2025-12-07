@@ -219,7 +219,7 @@ export default function IndicadoresPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setSelectedIndicator(null)}
-                        className="gap-2"
+                        className="gap-2 cursor-pointer"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Volver
@@ -234,11 +234,11 @@ export default function IndicadoresPage() {
 
                 <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)}>
                     <TabsList className="grid w-full grid-cols-2 max-w-md">
-                        <TabsTrigger value="local" className="flex items-center gap-2">
+                        <TabsTrigger value="local" className="flex items-center gap-2 cursor-pointer data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white transition-all">
                             <MapPin className="w-4 h-4" />
                             Vista Local
                         </TabsTrigger>
-                        <TabsTrigger value="national" className="flex items-center gap-2">
+                        <TabsTrigger value="national" className="flex items-center gap-2 cursor-pointer data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white transition-all">
                             <Trophy className="w-4 h-4" />
                             Visor Nacional
                         </TabsTrigger>
@@ -481,17 +481,17 @@ export default function IndicadoresPage() {
                                         <div
                                             key={item.rank}
                                             className={`flex items-center justify-between p-4 rounded-lg transition-colors ${item.isCurrent
-                                                    ? 'bg-emerald-50 dark:bg-emerald-950/30 border-2 border-emerald-500'
-                                                    : 'bg-muted hover:bg-muted/80'
+                                                ? 'bg-emerald-50 dark:bg-emerald-950/30 border-2 border-emerald-500'
+                                                : 'bg-muted hover:bg-muted/80'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-4 flex-1">
                                                 <div
                                                     className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${item.rank <= 3
-                                                            ? 'bg-amber-500 text-white'
-                                                            : item.isCurrent
-                                                                ? 'bg-emerald-500 text-white'
-                                                                : 'bg-background text-foreground'
+                                                        ? 'bg-amber-500 text-white'
+                                                        : item.isCurrent
+                                                            ? 'bg-emerald-500 text-white'
+                                                            : 'bg-background text-foreground'
                                                         }`}
                                                 >
                                                     {item.rank}
@@ -600,9 +600,9 @@ export default function IndicadoresPage() {
                     <button
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
-                        className={`flex-shrink-0 h-24 w-24 rounded-xl border-2 transition-all hover:scale-105 ${selectedCategory === category.id
-                                ? 'border-primary bg-primary/5 shadow-md'
-                                : 'border-border hover:border-muted-foreground'
+                        className={`flex-shrink-0 h-24 w-24 rounded-xl border-2 transition-all hover:shadow-lg cursor-pointer ${selectedCategory === category.id
+                            ? 'border-primary bg-primary/5 shadow-md'
+                            : 'border-border hover:border-[#2D9D78]'
                             }`}
                     >
                         <div className="flex flex-col items-center justify-center h-full gap-2">
@@ -637,7 +637,7 @@ export default function IndicadoresPage() {
                             <button
                                 key={indicator.id}
                                 onClick={() => setSelectedIndicator(indicator.id)}
-                                className="w-full flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 hover:border-primary transition-all text-left group"
+                                className="w-full flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 hover:border-primary transition-all text-left group cursor-pointer"
                             >
                                 <div className="flex-1 min-w-0">
                                     <h4 className="font-medium mb-1 group-hover:text-primary transition-colors">

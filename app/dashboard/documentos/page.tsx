@@ -148,7 +148,7 @@ export default function DocumentosPage() {
     };
 
     const getVisibilityBadge = (visibility: string, isVerified?: boolean) => {
-        if (visibility === 'official') return <Badge className="bg-blue-600 hover:bg-blue-700"><ShieldCheck className="w-3 h-3 mr-1" /> Oficial</Badge>;
+        if (visibility === 'official') return <Badge className="bg-[#1E5F8C] hover:bg-[#164A6E] text-white"><ShieldCheck className="w-3 h-3 mr-1" /> Oficial</Badge>;
         if (visibility === 'public') return <Badge variant="secondary" className="bg-emerald-100 text-emerald-800"><Globe className="w-3 h-3 mr-1" /> Público {isVerified && '✓'}</Badge>;
         return <Badge variant="outline" className="text-muted-foreground"><Lock className="w-3 h-3 mr-1" /> Privado</Badge>;
     };
@@ -256,7 +256,7 @@ export default function DocumentosPage() {
                         Repositorio de normativas, guías, informes y documentación ambiental.
                     </p>
                 </div>
-                <Button className="bg-[#2D9D78] hover:bg-[#2D9D78]/90 shadow-sm">
+                <Button className="bg-[#2D9D78] hover:bg-[#2D9D78]/90 shadow-sm text-white cursor-pointer">
                     <Upload className="w-4 h-4 mr-2" />
                     Subir Documento
                 </Button>
@@ -293,11 +293,11 @@ export default function DocumentosPage() {
 
             <Tabs defaultValue="public" className="space-y-6">
                 <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-                    <TabsTrigger value="public" className="flex items-center gap-2">
+                    <TabsTrigger value="public" className="flex items-center gap-2 cursor-pointer hover:bg-muted data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white">
                         <Globe className="w-4 h-4" />
                         Documentos Públicos
                     </TabsTrigger>
-                    <TabsTrigger value="private" className="flex items-center gap-2">
+                    <TabsTrigger value="private" className="flex items-center gap-2 cursor-pointer hover:bg-muted data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white">
                         <Lock className="w-4 h-4" />
                         Mis Documentos
                     </TabsTrigger>

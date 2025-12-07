@@ -123,7 +123,7 @@ export function DashboardSidebar({
           href: '/dashboard/configuracion',
           label: 'Configuración',
           icon: <Settings className="w-5 h-5" />,
-          roles: ['superadmin', 'admin'], // Solo admins
+          // Accessible to all users
         },
       ],
       secondary: true,
@@ -172,14 +172,6 @@ export function DashboardSidebar({
         </button>
       </div>
 
-      {/* Organization Header - Compact */}
-      {!collapsed && (
-        <div className="px-4 py-2 border-b border-border">
-          <p className="text-xs text-muted-foreground mb-0.5">Organización</p>
-          <p className="text-sm font-medium truncate">{selectedOrg}</p>
-        </div>
-      )}
-
       {/* Navegación Principal */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {filteredMenuSections.map((section, idx) => (
@@ -200,7 +192,7 @@ export function DashboardSidebar({
                       'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all border-l-4',
                       isActive
                         ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border-emerald-500'
-                        : 'text-foreground hover:bg-muted border-transparent',
+                        : 'text-foreground hover:bg-muted hover:border-[#F5A623]/50 border-transparent cursor-pointer',
                       collapsed && 'justify-center'
                     )}
                     title={collapsed ? item.label : undefined}

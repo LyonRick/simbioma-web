@@ -75,7 +75,7 @@ export default function BlogPage() {
                                 {post.excerpt}
                             </p>
                             <Link href={`/blog/${post.slug}`}>
-                                <Button variant="ghost" className="p-0 h-auto text-verde-bosque hover:text-verde-bosque-dark hover:bg-transparent">
+                                <Button variant="ghost" className="p-0 h-auto text-verde-bosque hover:text-verde-bosque-dark hover:bg-transparent cursor-pointer">
                                     Leer más <ArrowRight className="ml-2 w-4 h-4" />
                                 </Button>
                             </Link>

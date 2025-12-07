@@ -1,51 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ContactForm } from "@/components/forms/ContactForm";
 
 export default function CTAFinal() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    organization: "",
-    type: ""
-  });
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("loading");
-    setErrorMessage("");
-
-    try {
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al enviar la solicitud');
-      }
-
-      setStatus("success");
-      // Limpiar formulario
-      setFormData({ name: "", email: "", organization: "", type: "" });
-
-    } catch (error) {
-      console.error('Error:', error);
-      setStatus("error");
-      setErrorMessage(error instanceof Error ? error.message : 'Error inesperado');
-    }
-  };
-
   return (
     <section id="cta-final" className="py-24 relative overflow-hidden">
       {/* Background Gradient */}
@@ -58,7 +15,7 @@ export default function CTAFinal() {
       </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-lg rounded-3xl p-8 md:p-12 border border-white/20 shadow-2xl">
+        <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               Lidera la regeneración territorial
@@ -68,127 +25,12 @@ export default function CTAFinal() {
             </p>
           </div>
 
-          {status === "success" ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-12"
-            >
-              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <CheckCircle2 className="w-10 h-10 text-verde-bosque" />
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">¡Solicitud Recibida!</h3>
-              <p className="text-white/80">Te contactaremos en breve para agendar tu demo.</p>
-              <Button
-                variant="ghost"
-                className="mt-6 text-white hover:bg-white/20"
-                onClick={() => setStatus("idle")}
-              >
-                Enviar otra solicitud
-              </Button>
-            </motion.div>
-          ) : status === "error" ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-12"
-            >
-              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <svg className="w-10 h-10 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Error al Enviar</h3>
-              <p className="text-white/80 mb-4">{errorMessage}</p>
-              <Button
-                variant="ghost"
-                className="mt-6 text-white hover:bg-white/20"
-                onClick={() => setStatus("idle")}
-              >
-                Intentar nuevamente
-              </Button>
-            </motion.div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="beta-name" className="sr-only">Nombre completo</label>
-                  <input
-                    id="beta-name"
-                    required
-                    placeholder="Nombre completo"
-                    aria-label="Nombre completo"
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20"
-                    value={formData.name}
-                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="beta-email" className="sr-only">Email corporativo</label>
-                  <input
-                    id="beta-email"
-                    required
-                    type="email"
-                    placeholder="Email corporativo"
-                    aria-label="Email corporativo"
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20"
-                    value={formData.email}
-                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="beta-org" className="sr-only">Organización</label>
-                <input
-                  id="beta-org"
-                  required
-                  placeholder="Organización"
-                  aria-label="Organización"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20"
-                  value={formData.organization}
-                  onChange={e => setFormData({ ...formData, organization: e.target.value })}
-                />
-              </div>
-              <div>
-                <label htmlFor="beta-type" className="sr-only">Tipo de organización</label>
-                <select
-                  id="beta-type"
-                  required
-                  aria-label="Tipo de organización"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all backdrop-blur-sm hover:bg-white/20 [&>option]:text-gray-900"
-                  value={formData.type}
-                  onChange={e => setFormData({ ...formData, type: e.target.value })}
-                >
-                  <option value="" disabled>Tipo de Organización</option>
-                  <option value="gobierno">Gobierno Local / Regional</option>
-                  <option value="empresa">Empresa Privada</option>
-                  <option value="otro">Otro</option>
-                </select>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={status === "loading"}
-                className="w-full h-14 text-lg font-bold bg-amarillo-sol hover:bg-amarillo-sol-dark text-white border-0 shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all"
-              >
-                {status === "loading" ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    <span>Enviando...</span>
-                  </div>
-                ) : (
-                  <>
-                    Solicitar Acceso Beta
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </>
-                )}
-              </Button>
-            </form>
-          )}
-
-          <p className="text-center text-white/60 text-sm mt-8">
-            Sin compromiso. No requiere tarjeta de crédito.
-          </p>
+          <div className="bg-white border border-white/20 rounded-3xl p-8 md:p-12 shadow-2xl max-w-2xl mx-auto">
+            <ContactForm />
+            <p className="text-center text-gray-500 text-sm mt-8">
+              Sin compromiso. No requiere tarjeta de crédito.
+            </p>
+          </div>
         </div>
       </div>
     </section>

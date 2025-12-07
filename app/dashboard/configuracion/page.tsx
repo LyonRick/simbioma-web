@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 import { inviteUser, deleteUser } from './actions';
+import { getUserPreferences, updateUserPreferences, type UserPreferences } from './preferences-actions';
 
 interface UserProfile {
     id: string;
@@ -45,11 +46,9 @@ export default function ConfigurationPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
-    // Notification preferences
-    const [emailNotifications, setEmailNotifications] = useState(true);
-    const [dataUpdates, setDataUpdates] = useState(true);
-    const [platformUpdates, setPlatformUpdates] = useState(true);
-    const [weeklyReports, setWeeklyReports] = useState(false);
+    // Notification preferences (loaded from DB)
+    const [preferences, setPreferences] = useState<UserPreferences | null>(null);
+    const [savingPreferences, setSavingPreferences] = useState(false);
 
     // Form state
     const [fullName, setFullName] = useState('');
@@ -104,6 +103,12 @@ export default function ConfigurationPage() {
                     loadOrgUsers(profile.organization_id);
                 }
             }
+        }
+
+        // Load user preferences
+        const prefsResult = await getUserPreferences();
+        if (prefsResult.success && prefsResult.data) {
+            setPreferences(prefsResult.data);
         }
 
         setLoading(false);
@@ -245,6 +250,32 @@ export default function ConfigurationPage() {
         return typeLabels[type] || type;
     };
 
+    const updatePreference = (key: keyof UserPreferences, value: any) => {
+        if (!preferences) return;
+        setPreferences({ ...preferences, [key]: value });
+    };
+
+    const handleSavePreferences = async () => {
+        if (!preferences) return;
+        setSavingPreferences(true);
+
+        const result = await updateUserPreferences({
+            email_digest_frequency: preferences.email_digest_frequency,
+            notify_document_expiry: preferences.notify_document_expiry,
+            notify_platform_updates: preferences.notify_platform_updates,
+            notify_calendar_events: preferences.notify_calendar_events,
+            notify_user_actions: preferences.notify_user_actions,
+        });
+
+        if (result.success) {
+            toast.success(result.message);
+        } else {
+            toast.error(result.message);
+        }
+
+        setSavingPreferences(false);
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
@@ -264,19 +295,19 @@ export default function ConfigurationPage() {
 
             <Tabs defaultValue="account" className="space-y-6">
                 <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 gap-2">
-                    <TabsTrigger value="account" className="flex items-center gap-2">
+                    <TabsTrigger value="account" className="flex items-center gap-2 cursor-pointer data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white transition-all">
                         <User className="w-4 h-4" />
                         <span className="hidden sm:inline">Cuenta</span>
                     </TabsTrigger>
-                    <TabsTrigger value="organization" className="flex items-center gap-2">
+                    <TabsTrigger value="organization" className="flex items-center gap-2 cursor-pointer data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white transition-all">
                         <Building2 className="w-4 h-4" />
                         <span className="hidden sm:inline">Organización</span>
                     </TabsTrigger>
-                    <TabsTrigger value="security" className="flex items-center gap-2">
+                    <TabsTrigger value="security" className="flex items-center gap-2 cursor-pointer data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white transition-all">
                         <Shield className="w-4 h-4" />
                         <span className="hidden sm:inline">Seguridad</span>
                     </TabsTrigger>
-                    <TabsTrigger value="notifications" className="flex items-center gap-2">
+                    <TabsTrigger value="notifications" className="flex items-center gap-2 cursor-pointer data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white transition-all">
                         <Bell className="w-4 h-4" />
                         <span className="hidden sm:inline">Notificaciones</span>
                     </TabsTrigger>
@@ -335,7 +366,7 @@ export default function ConfigurationPage() {
                                 <Button
                                     onClick={handleSaveProfile}
                                     disabled={saving || fullName === userProfile?.full_name}
-                                    className="bg-[#2D9D78] hover:bg-[#2D9D78]/90"
+                                    className="bg-[#2D9D78] hover:bg-[#2D9D78]/90 text-white cursor-pointer"
                                 >
                                     {saving ? (
                                         <>
@@ -502,76 +533,137 @@ export default function ConfigurationPage() {
                         <CardHeader>
                             <CardTitle>Preferencias de Notificaciones</CardTitle>
                             <CardDescription>
-                                Configura cómo y cuándo deseas recibir notificaciones
+                                Configura cómo y cuando deseas recibir notificaciones
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                    <p className="font-medium mb-1">Notificaciones por Email</p>
-                                    <p className="text-sm text-muted-foreground">
-                                        Recibe actualizaciones importantes en tu correo
-                                    </p>
+                            {preferences ? (
+                                <>
+                                    {/* Frecuencia de Emails */}
+                                    <div className="space-y-3">
+                                        <p className="font-medium mb-1">Frecuencia de Emails</p>
+                                        <p className="text-sm text-muted-foreground mb-3">
+                                            Con qué frecuencia deseas recibir resúmenes por email
+                                        </p>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {(['daily', 'weekly', 'never'] as const).map((freq) => (
+                                                <button
+                                                    key={freq}
+                                                    onClick={() => updatePreference('email_digest_frequency', freq)}
+                                                    className={`px-4 py-2 rounded-md border text-sm font-medium transition-colors ${preferences.email_digest_frequency === freq
+                                                        ? 'bg-[#2D9D78] text-white border-[#2D9D78]'
+                                                        : 'bg-background border-border hover:bg-muted'
+                                                        }`}
+                                                >
+                                                    {freq === 'daily' ? 'Diario' : freq === 'weekly' ? 'Semanal' : 'Nunca'}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <Separator />
+
+                                    {/* Document Expiry */}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="font-medium mb-1">Vencimiento de Documentos</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                Alertas cuando un documento estratégico esté por vencer
+                                            </p>
+                                        </div>
+                                        <Switch
+                                            checked={preferences.notify_document_expiry}
+                                            onCheckedChange={(checked) => updatePreference('notify_document_expiry', checked)}
+                                        />
+                                    </div>
+
+                                    <Separator />
+
+                                    {/* Platform Updates */}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="font-medium mb-1">Actualizaciones de Plataforma</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                Changelog y nuevas funcionalidades de Simbioma
+                                            </p>
+                                        </div>
+                                        <Switch
+                                            checked={preferences.notify_platform_updates}
+                                            onCheckedChange={(checked) => updatePreference('notify_platform_updates', checked)}
+                                        />
+                                    </div>
+
+                                    <Separator />
+
+                                    {/* Calendar Events */}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="font-medium mb-1">Recordatorios de Calendario</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                Hitos próximos y fechas importantes del calendario estratégico
+                                            </p>
+                                        </div>
+                                        <Switch
+                                            checked={preferences.notify_calendar_events}
+                                            onCheckedChange={(checked) => updatePreference('notify_calendar_events', checked)}
+                                        />
+                                    </div>
+
+                                    <Separator />
+
+                                    {/* User Actions */}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="font-medium mb-1">Acciones de Usuarios</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                Cuando te asignen documentos, proyectos o tareas
+                                            </p>
+                                        </div>
+                                        <Switch
+                                            checked={preferences.notify_user_actions}
+                                            onCheckedChange={(checked) => updatePreference('notify_user_actions', checked)}
+                                        />
+                                    </div>
+
+                                    <Separator />
+
+                                    <div className="flex justify-end gap-2">
+                                        <Button
+                                            variant="outline"
+                                            onClick={async () => {
+                                                const result = await getUserPreferences();
+                                                if (result.success && result.data) {
+                                                    setPreferences(result.data);
+                                                    toast.info('Cambios descartados');
+                                                }
+                                            }}
+                                        >
+                                            Descartar Cambios
+                                        </Button>
+                                        <Button
+                                            className="bg-[#2D9D78] hover:bg-[#2D9D78]/90 text-white cursor-pointer"
+                                            onClick={handleSavePreferences}
+                                            disabled={savingPreferences}
+                                        >
+                                            {savingPreferences ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                    Guardando...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Save className="w-4 h-4 mr-2" />
+                                                    Guardar Preferencias
+                                                </>
+                                            )}
+                                        </Button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-center py-8 text-muted-foreground">
+                                    Cargando preferencias...
                                 </div>
-                                <Switch
-                                    checked={emailNotifications}
-                                    onCheckedChange={setEmailNotifications}
-                                />
-                            </div>
-
-                            <Separator />
-
-                            <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                    <p className="font-medium mb-1">Actualizaciones de Datos</p>
-                                    <p className="text-sm text-muted-foreground">
-                                        Notificaciones cuando se añaden nuevos datos territoriales
-                                    </p>
-                                </div>
-                                <Switch
-                                    checked={dataUpdates}
-                                    onCheckedChange={setDataUpdates}
-                                />
-                            </div>
-
-                            <Separator />
-
-                            <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                    <p className="font-medium mb-1">Actualizaciones de Plataforma</p>
-                                    <p className="text-sm text-muted-foreground">
-                                        Changelog y nuevas funcionalidades de Simbioma
-                                    </p>
-                                </div>
-                                <Switch
-                                    checked={platformUpdates}
-                                    onCheckedChange={setPlatformUpdates}
-                                />
-                            </div>
-
-                            <Separator />
-
-                            <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                    <p className="font-medium mb-1">Reportes Semanales</p>
-                                    <p className="text-sm text-muted-foreground">
-                                        Resumen semanal de indicadores y actividad
-                                    </p>
-                                </div>
-                                <Switch
-                                    checked={weeklyReports}
-                                    onCheckedChange={setWeeklyReports}
-                                />
-                            </div>
-
-                            <Separator />
-
-                            <div className="flex justify-end">
-                                <Button className="bg-[#2D9D78] hover:bg-[#2D9D78]/90">
-                                    <Save className="w-4 h-4 mr-2" />
-                                    Guardar Preferencias
-                                </Button>
-                            </div>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>

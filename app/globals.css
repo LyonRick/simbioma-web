@@ -8,8 +8,10 @@
     /* Ocean Teal: #0E7490 -> 193 82% 31% */
     /* Terracotta: #EA580C -> 15 90% 48% */
 
-    --background: 60 9% 98%; /* Warm Stone */
-    --foreground: 215 28% 17%; /* Near Black */
+    --background: 60 9% 98%;
+    /* Warm Stone */
+    --foreground: 215 28% 17%;
+    /* Near Black */
 
     --card: 0 0% 100%;
     --card-foreground: 215 28% 17%;
@@ -17,16 +19,19 @@
     --popover: 0 0% 100%;
     --popover-foreground: 215 28% 17%;
 
-    --primary: 161 94% 30%; /* Deep Emerald */
+    --primary: 161 94% 30%;
+    /* Deep Emerald */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 193 82% 31%; /* Ocean Teal */
+    --secondary: 193 82% 31%;
+    /* Ocean Teal */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 15 90% 48%; /* Terracotta */
+    --accent: 15 90% 48%;
+    /* Terracotta */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -34,7 +39,8 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 161 94% 30%; /* Deep Emerald */
+    --ring: 161 94% 30%;
+    /* Deep Emerald */
 
     --radius: 0.75rem;
   }
@@ -44,16 +50,20 @@
     /* Deep Moss: #1C2624 -> 168 15% 13% */
     /* Bright Emerald: #10B981 -> 160 84% 39% */
 
-    --background: 160 38% 6%; /* Forest Night */
-    --foreground: 60 9% 98%; /* Off-white */
+    --background: 160 38% 6%;
+    /* Forest Night */
+    --foreground: 60 9% 98%;
+    /* Off-white */
 
-    --card: 168 15% 13%; /* Deep Moss */
+    --card: 168 15% 13%;
+    /* Deep Moss */
     --card-foreground: 60 9% 98%;
 
     --popover: 168 15% 13%;
     --popover-foreground: 60 9% 98%;
 
-    --primary: 160 84% 39%; /* Bright Emerald */
+    --primary: 160 84% 39%;
+    /* Bright Emerald */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 193 82% 31%;
@@ -82,7 +92,7 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
   }
 
   body {

@@ -70,7 +70,7 @@ export default function FAQ() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.15 }}
                   >
                     <div className="px-6 pb-6 text-gray-600 leading-relaxed">
                       {faq.answer}

@@ -4,6 +4,13 @@
 **Versión del Proyecto**: MVP 1.0 en desarrollo  
 **Estado General**: Fase 1 Web Pública completada (90%), Fase 2 Backend completada (85%)
 
+> 🎉 **COMMIT EXITOSO** (2024-12-03 23:19): Módulos Avanzados del Dashboard desplegados y disponibles en GitHub
+> - ✅ Calendario Estratégico con vista mensual
+> - ✅ Biblioteca Documental pública/privada
+> - ✅ Sistema de Notificaciones (arquitectura + UI)
+> - ✅ 3 nuevas tablas en producción
+> - Ver detalles en `docs/sessions/2024-12-03-advanced-modules.md`
+
 ---
 
 ## 🎯 Resumen Ejecutivo
@@ -230,17 +237,19 @@ Basado en las últimas 10 conversaciones:
 
 ## 🚨 Elementos Críticos Sin Documentar
 
-### 1. Documentación de Catálogos SINADER ⚠️
+### 1. Documentación de Catálogos SINADER ✅
 
-**Archivos creados sin documentar**:
-- `scripts/migration-sinader-catalogs.sql` (209 KB)
-- `scripts/generate-sinader-seeds-final.py`
-- `scripts/seed-sinader-final.sql`
+**Archivos creados y documentados**:
+- ✅ `scripts/migration-sinader-catalogs.sql` (209 KB)
+- ✅ `scripts/generate-sinader-seeds-final.py`
+- ✅ `scripts/seed-sinader-final.sql`
+- ✅ `docs/data/sinader-catalogs-documentation.md` (368 líneas, completo)
 
-**Acción requerida**: Crear `docs/data/sinader-catalogs-documentation.md` explicando:
-- Estructura de códigos LER
-- Categorías de tratamientos
-- Proceso de generación de seeds
+**Documentación incluye**:
+- ✅ Estructura de códigos LER (499 códigos)
+- ✅ Categorías de tratamientos (12 eliminación, 41 valorización)
+- ✅ Proceso de generación de seeds
+- ✅ Referencias oficiales del Manual SINADER
 
 ### 2. Workflows Personalizados ⚠️
 
@@ -308,6 +317,20 @@ Basado en las últimas 10 conversaciones:
 ---
 
 ## 📝 Changelog Reciente
+
+### 2025-12-07 (Sprint 4-6 UI Polish)
+- ✅ **Root fix para dark mode** - `darkMode: class` en Tailwind config
+- ✅ **Dropdowns/Popovers ahora blancos** - Eliminados todos los prefijos `dark:`
+- ✅ **Header reestructurado** - Nuevos links: ¿Cómo funciona?, ¿Por qué elegirnos?
+- ✅ **Hover effects** - Color naranja (`#F5A623`) en dropdowns y sidebar
+- ✅ **Indicadores cards** - Border verde-bosque al hover
+- ✅ **Documentos tabs** - Verde con texto blanco cuando activo
+- ✅ **Badge Oficial** - Corregido a azul-oceano (`#1E5F8C`)
+- ✅ **Regenerar Chile** - Ahora visible con `#2D9D78`
+- ✅ **Organización duplicada** - Eliminada del sidebar
+- ✅ **CTAFinal** - Fondo blanco sólido
+- ⏳ **Scroll transition** - Persiste (investigar Next.js router)
+- ⏳ **User data** - Requiere seed en tabla `users` de Supabase
 
 ### 2024-12-03
 - ✅ **Implementación RBAC completa** - Menú del sidebar filtrado por rol
@@ -428,22 +451,17 @@ Esta sección detalla las tareas inmediatas organizadas por prioridad y categor�
 
 ### Documentos Técnicos Faltantes
 
-1. **`docs/database-deployment.md`**
+1. **`docs/database-deployment.md`** ⚠️
    - Proceso de deploy a Supabase
    - Migraciones y rollbacks
    - Backup y recovery
 
-2. **`docs/data/sinader-catalogs-documentation.md`**
-   - Estructura de códigos LER
-   - Categorías de tratamientos
-   - Fuentes oficiales
-
-3. **`docs/api-reference.md`**
+2. **`docs/api-reference.md`** ⚠️
    - Endpoints de Supabase
    - Row Level Security policies
    - Ejemplos de queries
 
-4. **`docs/workflows/README.md`**
+3. **`docs/workflows/README.md`** ⚠️
    - Descripción de workflows personalizados
    - Guía de uso
    - Cuándo usar cada workflow

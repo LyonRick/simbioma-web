@@ -21,9 +21,9 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { name: "Soluciones", href: "/#solucion" },
-    { name: "Para Gobiernos", href: "/#segmentacion" },
-    { name: "Para Empresas", href: "/#segmentacion" },
+    { name: "Soluciones", href: "/#segmentacion" },
+    { name: "¿Cómo funciona?", href: "/#solucion" },
+    { name: "¿Por qué elegirnos?", href: "/#beneficios" },
     { name: "Recursos", href: "/#faq" },
     { name: "Blog", href: "/blog" },
   ];
@@ -61,8 +61,8 @@ export default function Header() {
           <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-verde-bosque transition-colors">
             Iniciar Sesión
           </Link>
-          <Link href="/#cta-final">
-            <Button variant="default" size="sm">
+          <Link href="/demo">
+            <Button variant="default" size="sm" className="bg-[#2D9D78] hover:bg-[#258566] text-white cursor-pointer">
               Solicitar Demo
             </Button>
           </Link>
@@ -101,8 +101,8 @@ export default function Header() {
                 <Link href="/login" className="text-center py-2 text-gray-600 font-medium">
                   Iniciar Sesión
                 </Link>
-                <Link href="/#cta-final">
-                  <Button variant="default" className="w-full">
+                <Link href="/demo">
+                  <Button variant="default" className="w-full bg-[#2D9D78] hover:bg-[#258566] text-white cursor-pointer">
                     Solicitar Demo
                   </Button>
                 </Link>

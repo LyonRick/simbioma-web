@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Moon, Sun, User, ChevronRight, Menu } from 'lucide-react';
+import { Bell, Moon, Sun, User, ChevronRight, Menu, Settings } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -50,6 +50,7 @@ export function DashboardHeader({
 }: DashboardHeaderProps) {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
+  const router = useRouter();
 
   // Get user initials
   const getInitials = (name: string) => {
@@ -93,7 +94,7 @@ export function DashboardHeader({
   return (
     <header
       className={cn(
-        'fixed top-0 right-0 h-16 bg-card border-b border-border z-30 transition-all duration-300 flex items-center justify-between px-6',
+        'fixed top-0 right-0 h-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border z-30 transition-all duration-300 flex items-center justify-between px-6',
         sidebarCollapsed ? 'left-[80px]' : 'left-[280px]'
       )}
     >
@@ -137,14 +138,14 @@ export function DashboardHeader({
         <Popover>
           <PopoverTrigger asChild>
             <button
-              className="relative p-2 hover:bg-muted rounded-lg transition-colors"
+              className="relative p-2 hover:bg-muted rounded-lg transition-colors cursor-pointer"
               aria-label="Notificaciones"
             >
               <Bell className="w-5 h-5 text-foreground" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full ring-2 ring-card" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 p-0" align="end">
+          <PopoverContent className="w-80 p-0 bg-white text-popover-foreground border border-border shadow-lg z-50" align="end">
             <div className="p-4 border-b border-border">
               <h4 className="font-semibold leading-none">Notificaciones</h4>
               <p className="text-xs text-muted-foreground mt-1">Tienes 3 mensajes no leídos</p>
@@ -169,7 +170,7 @@ export function DashboardHeader({
             <div className="p-2 border-t border-border bg-muted/20">
               <button
                 onClick={() => router.push('/dashboard/novedades')}
-                className="w-full text-xs text-center py-2 text-primary hover:underline"
+                className="w-full text-xs text-center py-2 text-primary hover:underline cursor-pointer"
               >
                 Ver todas las notificaciones
               </button>
@@ -180,11 +181,11 @@ export function DashboardHeader({
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="p-2 hover:bg-muted rounded-lg transition-colors"
+          className="relative p-2 hover:bg-muted rounded-lg transition-colors cursor-pointer"
           aria-label="Cambiar tema"
         >
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 top-3 left-3" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
         </button>
 
         {/* User Menu */}
@@ -204,7 +205,7 @@ export function DashboardHeader({
               </div>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-popover z-50">
+          <DropdownMenuContent align="end" className="w-56 bg-white text-popover-foreground border border-border shadow-lg z-50">
             <DropdownMenuLabel>
               <div>
                 <p>{userProfile?.full_name || 'Usuario'}</p>
@@ -214,11 +215,15 @@ export function DashboardHeader({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/dashboard/configuracion')} className="cursor-pointer">
+              <Settings className="w-4 h-4 mr-2" />
+              Configuración
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
               <User className="w-4 h-4 mr-2" />
               Mi Perfil
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onLogout}>
+            <DropdownMenuItem onClick={onLogout} className="cursor-pointer">
               Cerrar Sesión
             </DropdownMenuItem>
           </DropdownMenuContent>
