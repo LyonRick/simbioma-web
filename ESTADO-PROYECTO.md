@@ -422,9 +422,17 @@ Basado en las últimas 10 conversaciones:
 - ✅ **package.json** actualizado
 - ✅ **package-lock.json** actualizado
 
-#### ⏳ Pendientes (identificados durante Sprint)
-- **P1: Page scroll transition** - Páginas legales muestran scroll desde abajo (Next.js router)
-- **P2: User data display** - Mostrar "Usuario" / "email@example.com" (requiere seed en tabla users)
+#### 🔧 Pending Commit: fix(scroll) - Page Scroll Transition (sin commit aún)
+- ✅ **P1 RESUELTO: Page scroll transition**
+  - Causa raíz: `scroll-smooth` class en `<html>` + re-enable después de 100ms
+  - Fix 1: Eliminado `className="scroll-smooth"` de `app/layout.tsx`
+  - Fix 2: Creado `ScrollToTop.tsx` con `useLayoutEffect` + `behavior: "instant"`
+  - Fix 3: Simplificado `ConditionalLayout.tsx` usando `<ScrollToTop />`
+- ✅ **P2 RESUELTO: User data display** - RLS infinite recursion fix
+  - Error: `42P17: infinite recursion detected in policy for relation "users"`
+  - Causa: Policies de admin/superadmin hacían `SELECT FROM users` → loop infinito
+  - Fix: Eliminadas 8 policies problemáticas, creadas 2 simples (`users_select_own`, `users_update_own`)
+  - ⏳ Pendiente futuro: Implementar policies de admin con función `SECURITY DEFINER`
 
 ### 2024-12-03
 - ✅ **Implementación RBAC completa** - Menú del sidebar filtrado por rol

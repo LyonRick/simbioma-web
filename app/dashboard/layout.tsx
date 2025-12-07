@@ -37,7 +37,12 @@ export default function DashboardLayout({
             const supabase = createClient();
 
             // Get current user
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+            console.log('[Dashboard] Auth user:', user?.id, user?.email);
+            if (authError) {
+                console.error('[Dashboard] Auth error:', authError);
+            }
 
             if (!user) {
                 router.push('/login');
@@ -45,25 +50,37 @@ export default function DashboardLayout({
             }
 
             // Get user profile
-            const { data: profile } = await supabase
+            const { data: profile, error: profileError } = await supabase
                 .from('users')
                 .select('*')
                 .eq('id', user.id)
                 .single();
 
+            console.log('[Dashboard] Profile query result:', profile);
+            if (profileError) {
+                console.error('[Dashboard] Profile error:', profileError);
+            }
+
             if (profile) {
                 setUserProfile(profile);
 
                 // Get organization
-                const { data: org } = await supabase
+                const { data: org, error: orgError } = await supabase
                     .from('organizations')
                     .select('id, name')
                     .eq('id', profile.organization_id)
                     .single();
 
+                console.log('[Dashboard] Organization:', org);
+                if (orgError) {
+                    console.error('[Dashboard] Org error:', orgError);
+                }
+
                 if (org) {
                     setOrganization(org);
                 }
+            } else {
+                console.warn('[Dashboard] No profile found for user:', user.id);
             }
 
             setLoading(false);
