@@ -90,7 +90,7 @@ export async function POST(request: Request) {
  */
 export async function GET() {
     try {
-        const supabase = createClient()
+        const supabase = await createClient()
 
         // TODO: Verificar autenticación de admin
 
@@ -113,7 +113,7 @@ export async function GET() {
         return NextResponse.json({
             total: totalCount,
             byType,
-            recentCount: stats?.filter(s =>
+            recentCount: stats?.filter((s: { created_at: string }) =>
                 new Date(s.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
             ).length
         })
