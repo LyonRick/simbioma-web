@@ -1,15 +1,15 @@
 # 📊 Estado del Proyecto Simbioma - Diciembre 2025
 
-**Última actualización**: 2024-12-03  
-**Versión del Proyecto**: MVP 1.0 en desarrollo  
-**Estado General**: Fase 1 Web Pública completada (90%), Fase 2 Backend completada (85%)
+**Última actualización**: 2024-12-07
+**Versión del Proyecto**: MVP 1.0 en desarrollo
+**Estado General**: Fase 1 Web Pública completada (95%), Fase 2 Backend completada (90%)
 
-> 🎉 **COMMIT EXITOSO** (2024-12-03 23:19): Módulos Avanzados del Dashboard desplegados y disponibles en GitHub
-> - ✅ Calendario Estratégico con vista mensual
-> - ✅ Biblioteca Documental pública/privada
-> - ✅ Sistema de Notificaciones (arquitectura + UI)
-> - ✅ 3 nuevas tablas en producción
-> - Ver detalles en `docs/sessions/2024-12-03-advanced-modules.md`
+> 🎉 **COMMITS EXITOSOS** (2024-12-07): 4 commits desplegados y disponibles en GitHub
+> - ✅ **Waitlist API**: Endpoint POST/GET + ContactForm + página /demo
+> - ✅ **User Preferences**: Sistema de preferencias con server actions + SQL migration
+> - ✅ **UI Polish**: Dark mode fix, navegación Header, hover effects brand colors
+> - ✅ **Dependencies**: Actualización de package.json/lock
+> - Ver changelog detallado abajo ↓
 
 ---
 
@@ -21,7 +21,7 @@ Simbioma es una plataforma SaaS dual para la gestión ambiental territorial y co
 
 - ✅ **Web pública premium** diseñada y desplegada
 - ✅ **Homepage** con animaciones, diseño modular y SEO optimizado
-- ✅ **Database Schema v4.0** sincronizado con Supabase (20 tablas)
+- ✅ **Database Schema v4.0** sincronizado con Supabase (22 tablas incluyendo user_preferences)
 - ✅ **RLS Policies** implementadas y verificadas
 - ✅ **Autenticación Real** implementada (Login/Signup con Zod y Supabase Auth)
 - ✅ **Dashboard Funcional** con integración de datos reales
@@ -30,6 +30,10 @@ Simbioma es una plataforma SaaS dual para la gestión ambiental territorial y co
 - ✅ **Usuarios Demo** creados y funcionales (7 usuarios)
 - ✅ **Catálogos SINADER** (residuos y tratamientos) migrados
 - ✅ **Build exitoso** del proyecto Next.js
+- ✅ **Waitlist API** para captación Beta (POST/GET endpoints)
+- ✅ **ContactForm** con validación para demos
+- ✅ **User Preferences System** con server-side actions
+- ✅ **UI Polish Sprint** - Dark mode fix, navegación, hover effects con brand colors
 
 ---
 
@@ -39,34 +43,45 @@ Simbioma es una plataforma SaaS dual para la gestión ambiental territorial y co
 simbioma-web/
 ├── app/                          # Next.js App Router
 │   ├── page.tsx                 # Homepage ✅
+│   ├── api/
+│   │   └── waitlist/            # Waitlist API endpoints ✅ NUEVO
 │   ├── blog/                    # Blog público ✅
-│   ├── dashboard/               # Dashboard protegido ⏳
+│   ├── dashboard/               # Dashboard protegido ✅
+│   │   ├── configuracion/
+│   │   │   └── preferences-actions.ts  # Server actions ✅ NUEVO
+│   ├── demo/                    # Página demo request ✅ NUEVO
 │   ├── login/                   # Autenticación ✅
 │   └── (legal)/                 # Privacidad, Términos, Seguridad ✅
 ├── components/
 │   ├── ui/                      # shadcn/ui components ✅
 │   ├── layout/                  # Headers, footers ✅
 │   ├── sections/                # Secciones homepage ✅
+│   ├── forms/                   # Formularios (ContactForm) ✅ NUEVO
 │   ├── dashboard/               # Componentes dashboard ⏳
 │   └── brand/                   # Logo y marca ✅
 ├── docs/
 │   ├── PRD-Simbioma.md         # Product Requirements Document ✅
 │   ├── business-model.md        # Modelo de negocio ✅
 │   ├── architecture/            # Database schema, arquitectura ✅
+│   │   ├── notifications-system.md
+│   │   └── user-preferences-analysis.md  # ✅ NUEVO
 │   ├── data/                    # Documentación de datos
+│   ├── implementation/          # Guías de implementación ✅ NUEVO
 │   └── workflows/               # Workflows del proyecto
 ├── scripts/
 │   ├── migration-sinader-catalogs.sql  # Migración SINADER ✅
 │   └── migration-rls-policies.sql      # RLS Policies ✅
 └── supabase/
-    └── schema.sql               # Schema de base de datos ✅
+    ├── schema.sql               # Schema de base de datos ✅
+    └── migrations/
+        └── 20241204_user_preferences.sql  # ✅ NUEVO
 ```
 
 ---
 
 ## 🗄️ Estado de la Base de Datos
 
-### Schema v4.0 (20 tablas principales)
+### Schema v4.0 (22 tablas principales)
 
 **Documentación**: [`docs/architecture/database-schema-v4.0-OFICIAL.md`](docs/architecture/database-schema-v4.0-OFICIAL.md)
 
@@ -81,9 +96,10 @@ simbioma-web/
    - `waste_treatments`: 53 operaciones
    - `subscription_plans`: 3 planes
 
-3. **Core & Auth** (3 tablas)
+3. **Core & Auth** (4 tablas)
    - `organizations`: Unificada (Gobiernos + Empresas)
    - `users`: Perfiles con roles y FK a organizaciones
+   - `user_preferences`: Preferencias y configuración de usuario ✅ NUEVO
    - `waitlist`: Gestión de leads Beta
 
 4. **Gestión Ambiental** (10 tablas)
@@ -96,6 +112,7 @@ simbioma-web/
 - ✅ `scripts/migration-sinader-catalogs.sql` - Datos SINADER completos
 - ✅ `scripts/migration-rls-policies.sql` - Políticas de seguridad RLS
 - ✅ `supabase/schema.sql` - Schema completo v4.0 sincronizado
+- ✅ `supabase/migrations/20241204_user_preferences.sql` - User preferences table ✅ NUEVO
 
 ---
 
@@ -134,6 +151,14 @@ simbioma-web/
 - Chart components (Recharts)
 - Calendar, Table
 
+#### API Routes
+- `/api/waitlist` POST - Crear registro en waitlist ✅ NUEVO
+- `/api/waitlist` GET - Estadísticas de waitlist (admin) ✅ NUEVO
+
+#### Formularios
+- `ContactForm` - Formulario de contacto con validación ✅ NUEVO
+- `/demo` - Página de solicitud de demo ✅ NUEVO
+
 ### En Desarrollo ⏳
 
 #### Dashboard (app/dashboard/)
@@ -142,8 +167,18 @@ simbioma-web/
 - **Integración de datos reales** desde Supabase ✅
 - **RBAC** - menú filtrado por rol del usuario ✅
 - **Logout** funcional con limpieza de estado ✅
-- **Mejoras visuales** (dropdown opaco, cursores pointer, espaciado optimizado) ✅
-- ⏳ **Pendiente**: Módulos específicos (SINADER, Indicadores, Configuración)
+- **User Preferences** - Sistema de preferencias con server actions ✅ NUEVO
+- **ConditionalLayout** - Layouts por ruta ✅ NUEVO
+- **Calendario mejorado** - Vista mensual optimizada ✅
+- **Novedades mejorado** - UI y filtros mejorados ✅
+- **Mejoras visuales Sprint 4-6**:
+  - Dark mode fix (class-only, sin auto) ✅
+  - Navegación Header reestructurada ✅
+  - Hover effects con brand colors (#F5A623, #2D9D78) ✅
+  - Cursor pointer en elementos interactivos ✅
+  - Fix "Regenerar Chile" visibilidad ✅
+  - Badge "Oficial" con azul-oceano correcto ✅
+- ⏳ **Pendiente**: Módulos específicos (SINADER completo, más indicadores)
 
 ---
 
@@ -165,7 +200,9 @@ simbioma-web/
 |-----------|--------|-------------|
 | [database-schema-v4.0-OFICIAL.md](docs/architecture/database-schema-v4.0-OFICIAL.md) | ✅ Actualizado | Schema oficial v4.0 |
 | [indicators-modelv4.md](docs/architecture/indicators-modelv4.md) | ✅ | Modelo de indicadores time-series |
-| [notifications-system.md](docs/architecture/notifications-system.md) | ✅ Nuevo | Arquitectura y matriz de notificaciones |
+| [notifications-system.md](docs/architecture/notifications-system.md) | ✅ | Arquitectura y matriz de notificaciones |
+| [user-preferences-analysis.md](docs/architecture/user-preferences-analysis.md) | ✅ Nuevo | Análisis de preferencias de usuario |
+| [user-preferences-setup.md](docs/implementation/user-preferences-setup.md) | ✅ Nuevo | Guía de implementación de preferencias |
 | [setup.md](docs/setup.md) | ✅ | Guía de configuración Supabase |
 | [testing.md](docs/testing.md) | ✅ | Guía de testing |
 
@@ -212,24 +249,38 @@ simbioma-web/
 
 Basado en las últimas 10 conversaciones:
 
-1. **RLS & Auth Implementation** (2025-12-02)
+1. **Sprint 4-6: UI Polish & Feature Additions** (2024-12-07)
+   - Waitlist API (POST/GET endpoints)
+   - ContactForm con validación + página /demo
+   - User Preferences system con server actions
+   - Dark mode fix (Tailwind class-only)
+   - UI polish: navegación, hover effects, brand colors
+   - 4 commits organizados y pusheados
+
+2. **Advanced Dashboard Modules** (2024-12-03)
+   - Calendario Estratégico
+   - Biblioteca Documental
+   - Sistema de Notificaciones (arquitectura + UI)
+   - RBAC completo
+
+3. **RLS & Auth Implementation** (2024-12-02)
    - Sincronización de schema v4.0
    - Implementación de RLS Policies
    - Autenticación real con Zod
 
-2. **Correcting Waste Treatments Data** (2025-11-30)
+4. **Correcting Waste Treatments Data** (2025-11-30)
    - Clasificación de tratamientos de residuos SINADER
    - 12 eliminación, 41 valorización
 
-3. **Fixing Build Errors** (2025-11-29)
+5. **Fixing Build Errors** (2025-11-29)
    - Corrección de errores de build
    - Eliminación de componentes obsoletos
    - Build exitoso logrado ✅
 
-4. **Design Review & Improvement** (2025-11-28)
+6. **Design Review & Improvement** (2025-11-28)
    - Review de diseño Figma vs live
 
-5. **Supabase Auth & Dashboard Setup** (2025-11-27)
+7. **Supabase Auth & Dashboard Setup** (2025-11-27)
    - Configuración inicial de autenticación
    - Setup de dashboard
 
@@ -271,21 +322,21 @@ Basado en las últimas 10 conversaciones:
 
 ## 🎯 Estado del MVP por Fases
 
-### Fase 1: Web Pública (90% ✅)
+### Fase 1: Web Pública (95% ✅)
 
 | Tarea | Estado | Notas |
 |-------|--------|-------|
 | Homepage premium | ✅ | Completo con animaciones |
 | Páginas legales | ✅ | Privacidad, Términos, Seguridad |
 | Blog estructura | 🔶 Parcial | Falta contenido |
-| Solicitud de acceso | ❌ | Formulario pendiente |
+| Solicitud de acceso | ✅ | ContactForm + /api/waitlist + /demo ✅ NUEVO |
 | Indicadores Beta | ❌ | Banner/disclaimer pendiente |
 
-### Fase 2: Autenticación y Dashboard (85% ✅)
+### Fase 2: Autenticación y Dashboard (90% ✅)
 
 | Tarea | Estado | Notas |
 |-------|--------|-------|
-| Configuración Supabase | ✅ | Schema v4.0 sincronizado |
+| Configuración Supabase | ✅ | Schema v4.0 sincronizado (22 tablas) |
 | Login/Registro | ✅ | Implementado con Server Actions y Zod |
 | RLS Policies | ✅ | Implementadas y verificadas |
 | Protección de rutas | ✅ | Middleware implementado |
@@ -294,6 +345,9 @@ Basado en las últimas 10 conversaciones:
 | RBAC | ✅ | Menú filtrado por rol |
 | Logout funcional | ✅ | Con limpieza de estado |
 | Usuarios Demo | ✅ | 7 usuarios creados |
+| User Preferences | ✅ | Sistema completo con server actions ✅ NUEVO |
+| UI Polish | ✅ | Dark mode fix, brand colors, navegación ✅ NUEVO |
+| Módulos mejorados | ✅ | Calendario, Novedades optimizados ✅ NUEVO |
 
 ### Fase 3: Módulo Gestión Territorial (0% ❌)
 
@@ -318,19 +372,59 @@ Basado en las últimas 10 conversaciones:
 
 ## 📝 Changelog Reciente
 
-### 2025-12-07 (Sprint 4-6 UI Polish)
-- ✅ **Root fix para dark mode** - `darkMode: class` en Tailwind config
-- ✅ **Dropdowns/Popovers ahora blancos** - Eliminados todos los prefijos `dark:`
-- ✅ **Header reestructurado** - Nuevos links: ¿Cómo funciona?, ¿Por qué elegirnos?
-- ✅ **Hover effects** - Color naranja (`#F5A623`) en dropdowns y sidebar
-- ✅ **Indicadores cards** - Border verde-bosque al hover
-- ✅ **Documentos tabs** - Verde con texto blanco cuando activo
-- ✅ **Badge Oficial** - Corregido a azul-oceano (`#1E5F8C`)
-- ✅ **Regenerar Chile** - Ahora visible con `#2D9D78`
-- ✅ **Organización duplicada** - Eliminada del sidebar
-- ✅ **CTAFinal** - Fondo blanco sólido
-- ⏳ **Scroll transition** - Persiste (investigar Next.js router)
-- ⏳ **User data** - Requiere seed en tabla `users` de Supabase
+### 2024-12-07 - Sprint 4-6: Waitlist API, User Preferences & UI Polish
+
+#### Commit 1: feat(api) - Waitlist API and ContactForm (d57882d)
+- ✅ **POST /api/waitlist** - Endpoint para registro Beta
+- ✅ **GET /api/waitlist** - Endpoint admin para estadísticas
+- ✅ **ContactForm** - Componente reutilizable con validación
+- ✅ **Página /demo** - Solicitud standalone de demos
+- ✅ **Integración Supabase** - Tabla waitlist conectada
+
+#### Commit 2: feat(dashboard) - User Preferences System (74f1af8)
+- ✅ **preferences-actions.ts** - Server actions para preferencias
+- ✅ **Calendario mejorado** - Vista mensual optimizada
+- ✅ **Novedades mejorado** - UI y filtros actualizados
+- ✅ **ConditionalLayout** - Componente para layouts por ruta
+- ✅ **Documentación completa**:
+  - `docs/architecture/user-preferences-analysis.md`
+  - `docs/implementation/user-preferences-setup.md`
+- ✅ **SQL Migration** - `supabase/migrations/20241204_user_preferences.sql`
+
+#### Commit 3: fix(ui) - UI Polish Sprint (d0397f5)
+- ✅ **Root fix dark mode** - `darkMode: ['class', '[data-theme="dark"]']` en Tailwind
+- ✅ **Dropdowns/Popovers blancos** - Eliminados prefijos `dark:` en componentes base
+- ✅ **Header reestructurado**:
+  - "Soluciones" → links a /#segmentacion
+  - Nuevo: "¿Cómo funciona?" → /#solucion
+  - Nuevo: "¿Por qué elegirnos?" → /#beneficios
+  - Eliminado: Duplicado "Blog" (fix key error)
+- ✅ **Hover effects brand colors**:
+  - Dropdowns/Selects: hover `#F5A623/20` (naranja)
+  - Sidebar items: hover border `#F5A623/50`
+  - Indicadores cards: hover border `#2D9D78` (verde-bosque)
+  - Documentos tabs: active bg `#2D9D78` + text-white
+- ✅ **Fixes visuales**:
+  - "Regenerar Chile" ahora visible (`text-[#2D9D78]`)
+  - Badge "Oficial" corregido a `bg-[#1E5F8C]` (azul-oceano)
+  - Login separator eliminado (clash visual)
+  - Organización duplicada eliminada del sidebar
+  - FAQ animation speed mejorado (0.15s)
+  - Indicadores hover: scale-105 → shadow-lg (evita cut-off)
+- ✅ **Cursor pointer** en todos los elementos interactivos:
+  - Botones CTA (Header, Hero, Configuración, Documentos, Blog)
+  - DropdownMenuItem y SelectItem
+  - Sidebar menu items
+- ✅ **Scroll behavior**: Changed to `auto` en globals.css
+- ✅ **ESTADO-PROYECTO.md** actualizado con changelog Sprint 4-6
+
+#### Commit 4: chore(deps) - Dependencies Update (b41eea9)
+- ✅ **package.json** actualizado
+- ✅ **package-lock.json** actualizado
+
+#### ⏳ Pendientes (identificados durante Sprint)
+- **P1: Page scroll transition** - Páginas legales muestran scroll desde abajo (Next.js router)
+- **P2: User data display** - Mostrar "Usuario" / "email@example.com" (requiere seed en tabla users)
 
 ### 2024-12-03
 - ✅ **Implementación RBAC completa** - Menú del sidebar filtrado por rol
@@ -360,12 +454,15 @@ Basado en las últimas 10 conversaciones:
 ## 🔄 Commits Recientes (Git)
 
 ```
-5e5b17b (HEAD -> main, origin/main) feat(seo): Add metadata, improve maintainability - Session 3
-8ca5c2f feat(ux): Improve navigation and use Design System Pages & Blog
-8445722 Initial setup: Next.js + Tailwind
+b41eea9 (HEAD -> main, origin/main) chore(deps): Update dependencies
+d0397f5 fix(ui): Resolve dark mode backgrounds, navigation, and hover effects
+74f1af8 feat(dashboard): Add user preferences system and improve modules
+d57882d feat(api): Add waitlist API and ContactForm for Beta signups
+e33162e feat: Implementar módulos avanzados del Dashboard (Calendario, Biblioteca, Notificaciones)
+5e5b17b feat(seo): Add metadata, improve maintainability - Session 3
 ```
 
-**Estado del repositorio**: ✅ Limpio, sin cambios pendientes
+**Estado del repositorio**: ✅ Sincronizado con origin/main (4 commits pusheados 2024-12-07)
 
 ---
 
@@ -401,11 +498,15 @@ Esta sección detalla las tareas inmediatas organizadas por prioridad y categor�
   - Implementar loading states
 
 #### 3. Formularios y Captación
-- [ ] **Formulario de Solicitud de Acceso**
-  - Diseñar en homepage
-  - Conectar a tabla `waitlist` en Supabase
-  - Integrar con email (opcional: Resend, SendGrid)
-  - Validación y feedback
+- [x] **Formulario de Solicitud de Acceso** ✅ COMPLETADO (2024-12-07)
+  - Componente ContactForm creado
+  - Endpoint /api/waitlist (POST/GET) implementado
+  - Conectado a tabla `waitlist` en Supabase
+  - Página /demo standalone creada
+  - Validación implementada
+- [ ] **Integración email** (opcional)
+  - Notificaciones automáticas (Resend, SendGrid)
+  - Email de confirmación a leads
 
 ### 📌 PRIORIDAD MEDIA - Completar MVP
 
@@ -525,15 +626,18 @@ Esta sección detalla las tareas inmediatas organizadas por prioridad y categor�
 
 | Métrica | Valor |
 |---------|-------|
-| **Archivos TypeScript** | ~77+ componentes |
-| **Líneas de código** | ~50K+ (incluyendo dependencies) |
-| **Tablas de BD diseñadas** | 28 tablas |
-| **Scripts de migración** | 14 archivos SQL/Python |
-| **Documentos MD** | 20+ archivos |
+| **Archivos TypeScript** | ~85+ componentes |
+| **Líneas de código** | ~52K+ (incluyendo dependencies) |
+| **Tablas de BD diseñadas** | 22 tablas principales + 6 auxiliares |
+| **Scripts de migración** | 15 archivos SQL/Python |
+| **Documentos MD** | 25+ archivos |
+| **API Endpoints** | 2 (waitlist POST/GET) |
 | **Build time** | ~15-20 segundos |
 | **Bundle size** | TBD (optimizar) |
+| **Commits totales** | 9 (últimos 6 mostrados arriba) |
 
 ---
 
-**Documento generado**: 2025-12-01  
-**Próxima revisión sugerida**: 2025-12-08 (semanal)
+**Documento actualizado**: 2024-12-07
+**Última versión**: Sprint 4-6 completado
+**Próxima revisión sugerida**: 2024-12-14 (semanal)
