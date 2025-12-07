@@ -33,10 +33,11 @@ export default function ConditionalLayout({
         return () => clearTimeout(timer);
     }, [pathname]);
 
-    // Don't show Header/Footer on dashboard routes
+    // Don't show Header/Footer on dashboard routes or login page
     const isDashboard = pathname?.startsWith("/dashboard");
+    const isLogin = pathname === "/login";
 
-    if (isDashboard) {
+    if (isDashboard || isLogin) {
         return (
             <MotionConfig reducedMotion="user">
                 {children}

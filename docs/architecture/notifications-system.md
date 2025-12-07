@@ -59,8 +59,14 @@ CREATE TABLE notifications (
 );
 ```
 
-### Tabla `user_preferences` (Propuesta para Configuración)
+### Tabla `user_preferences` (**RECOMENDADA** - Prioridad Alta)
 Controla qué notificaciones desea recibir el usuario.
+
+> 📖 **Análisis Técnico Completo**: Ver `docs/architecture/user-preferences-analysis.md`
+> - ✅ Reduce costos de email en ~60%
+> - ✅ Mejora UX y compliance legal
+> - ✅ Overhead mínimo (~50ms por query)
+
 ```sql
 CREATE TABLE user_preferences (
     user_id UUID PRIMARY KEY REFERENCES auth.users(id),

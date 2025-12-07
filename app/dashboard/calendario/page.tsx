@@ -158,11 +158,11 @@ export default function CalendarPage() {
 
                 <div className="flex items-center gap-2">
                     <Select value={filter} onValueChange={setFilter}>
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-[200px]">
                             <Filter className="w-4 h-4 mr-2" />
                             <SelectValue placeholder="Filtrar por tipo" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-popover border border-border shadow-lg">
                             <SelectItem value="all">Todos los eventos</SelectItem>
                             <SelectItem value="normativo">🔴 Normativo (Crítico)</SelectItem>
                             <SelectItem value="efemeride">🟢 Efemérides</SelectItem>
@@ -172,13 +172,38 @@ export default function CalendarPage() {
                         </SelectContent>
                     </Select>
 
-                    <div className="flex items-center border rounded-md bg-card">
+                    <div className="flex items-center gap-2">
+                        <Select
+                            value={currentDate.getMonth().toString()}
+                            onValueChange={(v) => setCurrentDate(new Date(currentDate.getFullYear(), parseInt(v), 1))}
+                        >
+                            <SelectTrigger className="w-[130px]">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-popover border border-border shadow-lg">
+                                {['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'].map((month, idx) => (
+                                    <SelectItem key={idx} value={idx.toString()}>{month}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Select
+                            value={currentDate.getFullYear().toString()}
+                            onValueChange={(v) => setCurrentDate(new Date(parseInt(v), currentDate.getMonth(), 1))}
+                        >
+                            <SelectTrigger className="w-[100px]">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-popover border border-border shadow-lg">
+                                {[2024, 2025, 2026, 2027].map(year => (
+                                    <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
                         <Button variant="ghost" size="icon" onClick={prevMonth}>
                             <ChevronLeft className="w-4 h-4" />
                         </Button>
-                        <span className="w-40 text-center font-semibold">
-                            {currentDate.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' })}
-                        </span>
                         <Button variant="ghost" size="icon" onClick={nextMonth}>
                             <ChevronRight className="w-4 h-4" />
                         </Button>
@@ -262,76 +287,85 @@ export default function CalendarPage() {
 
             {/* Dialog for Event Details / Creation */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                        <DialogTitle>
+                <DialogContent className="sm:max-w-[500px] bg-background border shadow-lg p-0 gap-0 overflow-hidden">
+                    <DialogHeader className="p-6 pb-2 bg-muted/30">
+                        <DialogTitle className="text-xl">
                             {selectedDate?.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' })}
                         </DialogTitle>
                         <DialogDescription>
-                            Eventos programados para este día
+                            Gestión de hitos y eventos
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="space-y-4 py-4">
-                        {/* Existing Events List */}
-                        {selectedDate && getEventsForDay(selectedDate.getDate()).length > 0 ? (
-                            <div className="space-y-3">
-                                {getEventsForDay(selectedDate.getDate()).map(event => (
-                                    <Card key={event.id} className="border-l-4" style={{ borderLeftColor: event.isGlobal ? undefined : '#2D9D78' }}>
-                                        <CardContent className="p-3">
-                                            <div className="flex justify-between items-start">
-                                                <div>
-                                                    <h4 className="font-semibold text-sm flex items-center gap-2">
-                                                        {event.title}
-                                                        {event.isGlobal && <Badge variant="outline" className="text-[10px]">Simbioma</Badge>}
-                                                    </h4>
-                                                    <p className="text-xs text-muted-foreground mt-1">{event.description}</p>
-                                                    {event.category === 'normativo' && (
-                                                        <p className="text-xs text-red-600 font-medium mt-2 flex items-center gap-1">
-                                                            <AlertTriangle className="w-3 h-3" />
-                                                            Acción Requerida: Revisar plataforma RETC
-                                                        </p>
-                                                    )}
-                                                </div>
-                                                {!event.isGlobal && (
-                                                    <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive">
-                                                        <Trash2 className="w-3 h-3" />
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-sm text-muted-foreground text-center py-4">No hay eventos para este día.</p>
-                        )}
-
+                    <div className="p-6 space-y-6">
                         {/* Add New Event Form */}
-                        <div className="border-t pt-4 mt-4">
-                            <h4 className="text-sm font-medium mb-3">Agregar Hito Personal</h4>
-                            <div className="flex gap-2">
+                        <div className="space-y-3">
+                            <h4 className="text-sm font-medium flex items-center gap-2 text-primary">
+                                <Plus className="w-4 h-4" />
+                                Nuevo Hito
+                            </h4>
+                            <div className="grid gap-3">
                                 <Input
                                     placeholder="Título del evento..."
                                     value={newEvent.title}
                                     onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                                    className="bg-background"
                                 />
-                                <Select
-                                    value={newEvent.category}
-                                    onValueChange={(v) => setNewEvent({ ...newEvent, category: v })}
-                                >
-                                    <SelectTrigger className="w-[130px]">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="personal">Personal</SelectItem>
-                                        <SelectItem value="gestion">Gestión</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <Button onClick={handleAddEvent} size="icon" className="shrink-0 bg-[#2D9D78]">
-                                    <Plus className="w-4 h-4" />
-                                </Button>
+                                <div className="flex gap-2">
+                                    <Select
+                                        value={newEvent.category}
+                                        onValueChange={(v) => setNewEvent({ ...newEvent, category: v })}
+                                    >
+                                        <SelectTrigger className="w-full bg-background">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-white dark:bg-zinc-950 border border-border shadow-lg z-[60]">
+                                            <SelectItem value="personal">Personal</SelectItem>
+                                            <SelectItem value="gestion">Gestión</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <Button onClick={handleAddEvent} className="shrink-0 bg-[#2D9D78] hover:bg-[#258566] text-white">
+                                        Agregar
+                                    </Button>
+                                </div>
                             </div>
+                        </div>
+
+                        <div className="border-t border-border my-4" />
+
+                        {/* Existing Events List */}
+                        <div className="space-y-3">
+                            <h4 className="text-sm font-medium text-muted-foreground">Eventos del día</h4>
+                            {selectedDate && getEventsForDay(selectedDate.getDate()).length > 0 ? (
+                                <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                                    {getEventsForDay(selectedDate.getDate()).map(event => (
+                                        <div key={event.id} className="flex items-start justify-between p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors group">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className={cn("w-2 h-2 rounded-full",
+                                                        event.category === 'normativo' ? 'bg-red-500' :
+                                                            event.category === 'efemeride' ? 'bg-emerald-500' :
+                                                                event.category === 'regenerativo' ? 'bg-indigo-500' :
+                                                                    'bg-gray-500'
+                                                    )} />
+                                                    <span className="font-medium text-sm">{event.title}</span>
+                                                    {event.isGlobal && <Badge variant="secondary" className="text-[10px] h-5">Simbioma</Badge>}
+                                                </div>
+                                                {event.description && <p className="text-xs text-muted-foreground pl-4">{event.description}</p>}
+                                            </div>
+                                            {!event.isGlobal && (
+                                                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <Trash2 className="w-3 h-3" />
+                                                </Button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 border-2 border-dashed rounded-lg bg-muted/10">
+                                    <p className="text-sm text-muted-foreground">No hay eventos programados</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </DialogContent>

@@ -220,15 +220,15 @@ export default function NovedadesPage() {
 
             <Tabs defaultValue="platform" className="space-y-6" onValueChange={() => setCurrentPage(1)}>
                 <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
-                    <TabsTrigger value="platform" className="flex items-center gap-2">
+                    <TabsTrigger value="platform" className="flex items-center gap-2 cursor-pointer data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white transition-all">
                         <Zap className="w-4 h-4" />
                         Plataforma
                     </TabsTrigger>
-                    <TabsTrigger value="data" className="flex items-center gap-2">
+                    <TabsTrigger value="data" className="flex items-center gap-2 cursor-pointer data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white transition-all">
                         <Database className="w-4 h-4" />
                         Datos
                     </TabsTrigger>
-                    <TabsTrigger value="roadmap" className="flex items-center gap-2">
+                    <TabsTrigger value="roadmap" className="flex items-center gap-2 cursor-pointer data-[state=active]:bg-[#2D9D78] data-[state=active]:text-white transition-all">
                         <Map className="w-4 h-4" />
                         Hoja de Ruta
                     </TabsTrigger>
@@ -265,21 +265,23 @@ export default function NovedadesPage() {
                         <h2 className="text-lg font-semibold text-primary">Hoja de Ruta 2025</h2>
                         <p className="text-sm text-muted-foreground mb-4">Próximas funcionalidades planificadas para Simbioma.</p>
 
-                        <div className="bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-900 rounded-xl p-6 mb-6">
-                            <div className="flex items-start gap-4">
-                                <div className="p-3 bg-emerald-100 dark:bg-emerald-900 rounded-full">
-                                    <Map className="w-6 h-6 text-emerald-700 dark:text-emerald-400" />
+                        <Card className="mb-6 border-2 border-primary/20 bg-card">
+                            <CardContent className="p-6">
+                                <div className="flex items-start gap-4">
+                                    <div className="p-3 bg-primary/10 rounded-full">
+                                        <Map className="w-6 h-6 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-foreground mb-1">Nuestra Visión 2025</h3>
+                                        <p className="text-muted-foreground text-sm leading-relaxed">
+                                            Estamos construyendo el sistema operativo ambiental más completo para gobiernos locales.
+                                            Este año nos enfocaremos en la integración profunda de datos (IoT, APIs gubernamentales)
+                                            y en herramientas predictivas basadas en IA.
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-lg font-bold text-emerald-900 dark:text-emerald-100 mb-1">Nuestra Visión 2025</h3>
-                                    <p className="text-emerald-800/80 dark:text-emerald-200/80 text-sm leading-relaxed">
-                                        Estamos construyendo el sistema operativo ambiental más completo para gobiernos locales.
-                                        Este año nos enfocaremos en la integración profunda de datos (IoT, APIs gubernamentales)
-                                        y en herramientas predictivas basadas en IA.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                            </CardContent>
+                        </Card>
 
                         {paginate(filterUpdates('roadmap')).map(renderUpdateCard)}
                     </div>
